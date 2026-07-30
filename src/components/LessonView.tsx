@@ -11,13 +11,13 @@ import {
   Terminal,
   TriangleAlert,
 } from "lucide-react";
-import type { Lesson, LessonBlock } from "@/content/types";
+import { AREA_LABEL, type Lesson, type LessonBlock } from "@/content/types";
 import { getQuiz } from "@/content/quizzes";
 import { getScenario } from "@/content/scenarios";
 import { isLessonRead, markLessonRead } from "@/lib/progress";
 import PageNav from "./PageNav";
 import RichText from "./RichText";
-import { Button, ButtonLink, Chip } from "./ui";
+import { Button, ButtonLink } from "./ui";
 import { cn } from "@/lib/cn";
 
 /** `1. O mapa físico` -> `mapa-fisico` */
@@ -127,7 +127,9 @@ export default function LessonView({ lesson }: { lesson: Lesson }) {
             aria-label="Seções da aula"
             className="sticky top-12 hidden h-fit w-52 shrink-0 lg:block"
           >
-            <p className="field-label">Nesta aula</p>
+            {/* Título do índice: prosa, não dado. Mono maiúsculo aqui era
+                fantasia técnica em cima de uma palavra comum. */}
+            <p className="text-xs font-semibold text-ink-soft">Nesta aula</p>
             <ul className="mt-2 space-y-0.5">
               {sections.map((s) => (
                 <li key={s.id}>
@@ -155,16 +157,25 @@ export default function LessonView({ lesson }: { lesson: Lesson }) {
         >
           <PageNav className="mb-6" />
 
+          {/* O título vem primeiro. A pastilha "Aula" com o tempo de leitura
+              ficava ACIMA dele, e rótulo em cima de título é proibido no
+              sistema — virou assinatura logo abaixo, que é onde metadado de
+              leitura pertence. */}
           <header className="border-b border-line pb-7">
-            <div className="flex items-center gap-2">
-              <Chip tone="accent">Aula</Chip>
-              <span className="inline-flex items-center gap-1 font-mono text-2xs text-ink-soft">
-                <Clock className="size-3" aria-hidden="true" />
-                {lesson.minutes} MIN
+            <h1 className="text-3xl font-semibold">{lesson.title}</h1>
+            <p className="mt-3 text-lg text-ink-soft">{lesson.summary}</p>
+            <div className="mt-4 flex items-center gap-3 text-sm text-ink-soft">
+              <span>
+                Nível {lesson.level} · {AREA_LABEL[lesson.area]}
+              </span>
+              <span aria-hidden="true" className="text-line-2">
+                ·
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Clock className="size-3.5" aria-hidden="true" />
+                {lesson.minutes} min de leitura
               </span>
             </div>
-            <h1 className="mt-4 text-3xl font-semibold">{lesson.title}</h1>
-            <p className="mt-3 text-lg text-ink-soft">{lesson.summary}</p>
           </header>
 
           <div className="mt-8 space-y-5">
@@ -301,7 +312,9 @@ function Block({ block }: { block: LessonBlock }) {
                   <th
                     key={i}
                     scope="col"
-                    className="field-label border-b border-line bg-sunken px-4 py-2 text-left"
+                    /* Cabeçalho de tabela é prosa curta, não medida: sans, e
+                       sem caixa alta, que a 11px atrapalhava a leitura. */
+                    className="border-b border-line bg-sunken px-4 py-2.5 text-left text-xs font-semibold text-ink"
                   >
                     <RichText text={h} />
                   </th>

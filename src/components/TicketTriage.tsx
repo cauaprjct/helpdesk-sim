@@ -373,7 +373,9 @@ function NoteStep({
 
       <div className="mt-4 overflow-hidden rounded-lg border border-line bg-surface">
         <div className="flex items-center justify-between border-b border-line bg-sunken px-4 py-2">
-          <p className="field-label">O registro deveria cobrir</p>
+          <p className="text-xs font-semibold text-ink-soft">
+            O registro deveria cobrir
+          </p>
           <span className="font-mono text-2xs text-ink-soft">
             {found}/{step.mustMention.length}
           </span>
@@ -418,7 +420,9 @@ function NoteStep({
       ) : (
         <div className="reveal-answer mt-5 overflow-hidden rounded-lg border border-line bg-surface">
           <div className="border-b border-line bg-sunken px-4 py-2">
-            <p className="field-label">Registro de referência</p>
+            <p className="text-xs font-semibold text-ink-soft">
+              Registro de referência
+            </p>
           </div>
           <div className="px-4 py-3.5">
             <p className="max-w-[64ch] text-sm leading-relaxed text-ink-soft">

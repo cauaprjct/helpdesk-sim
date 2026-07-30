@@ -1,0 +1,17 @@
+# Fim de linha normalizado.
+#
+# O repositório guarda LF e o checkout também usa LF. Sem isto, editar em
+# Windows converte para CRLF e o diff seguinte marca o arquivo inteiro como
+# alterado, escondendo a mudança real no meio do ruído.
+* text=auto eol=lf
+
+# Binário não deve ser tocado pela normalização.
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.webp  binary
+*.gif   binary
+*.ico   binary
+*.pdf   binary
+*.woff  binary
+*.woff2 binary

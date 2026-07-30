@@ -101,6 +101,11 @@ estreita para ler e o dado fica largo para consultar.
 - Lista antes de grade de cards. Sete laboratórios são sete linhas de uma lista com
   status à direita, não sete cartões iguais.
 - Trilha lateral fixa no desktop, tabs com rolagem horizontal no mobile.
+- **Seletor de nível (N1 / N2)** no topo do trilho, com uma linha explicando o que muda.
+  É um `radiogroup`, não abas de dificuldade: N1 e N2 são conteúdos diferentes, e a frase
+  ao lado diz isso ("atendimento ao usuário" vs "o que chega escalado"). Trocar de nível
+  cai na primeira trilha dele, e o medidor de progresso passa a ser **do nível corrente** —
+  progresso somado entre níveis não significaria nada.
 - Etapas numeradas com fio de ligação: a numeração é permitida porque a sequência é real
   (aula → laboratório → questionário) e a ordem carrega informação.
 - Escala semântica de z-index: `--z-rail` → `--z-sticky` → `--z-overlay` → `--z-toast`.
@@ -136,6 +141,17 @@ materiais e cada um exige sua própria faixa de contraste.
 
 Caminho de volta: internas → `/treino` (via `PageNav`) → `/` (o título do trilho lateral é
 o link para a capa).
+
+## Publicação
+
+Repositório: https://github.com/cauaprjct/helpdesk-sim · projeto Vercel `helpdesk-sim`,
+domínio `helpdesk-sim-seven.vercel.app` — o mesmo citado no README e na capa. Trocar de
+domínio exige atualizar os dois.
+
+Commits assinam como `134816351+cauaprjct@users.noreply.github.com` nos dois caminhos
+(git local e API do GitHub), para não publicar e-mail real no histórico e manter uma
+identidade só. O `.gitattributes` fixa LF, porque sem isso editar em Windows marca o
+arquivo inteiro como alterado e esconde a mudança real no diff.
 
 ## A capa (`/`)
 

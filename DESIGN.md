@@ -1,4 +1,4 @@
-# Sistema visual — Treino de suporte N1
+# Sistema visual — Treino de suporte técnico
 
 Verdade de produto em `PRODUCT.md`. Tokens em `src/app/globals.css`, primitivas em
 `src/components/ui.tsx`.
@@ -108,6 +108,9 @@ estreita para ler e o dado fica largo para consultar.
   progresso somado entre níveis não significaria nada.
 - Etapas numeradas com fio de ligação: a numeração é permitida porque a sequência é real
   (aula → laboratório → questionário) e a ordem carrega informação.
+- **Nada de rótulo acima de título.** Na página de aula o metadado (nível, área, tempo de
+  leitura) fica **abaixo** do `h1`, como assinatura. Antes havia uma pastilha "Aula" em
+  cima, que é a forma clássica de eyebrow e é proibida sem exceção.
 - Escala semântica de z-index: `--z-rail` → `--z-sticky` → `--z-overlay` → `--z-toast`.
 
 ## Movimento
@@ -138,6 +141,20 @@ sempre no mesmo lugar, em vez de cada tela inventar o seu.
 
 `ThemeToggle` aceita `tone="surface" | "console"`, porque o controle aparece nos dois
 materiais e cada um exige sua própria faixa de contraste.
+
+### Onde `.field-label` pode aparecer
+
+`.field-label` é mono, 11px e caixa alta. Ele existe para o vocabulário de **ordem de
+serviço**: nomear um campo discreto de dado. Nada além disso.
+
+| Permitido | Proibido |
+|---|---|
+| `Quem`, `Setor`, `Relato`, `Chamado #id` | Cabeçalho de tabela de aula |
+| `Evidência`, `Resultado`, `Triagem concluída` | Título de índice ou de seção |
+| Cabeçalho de painel de dado | Frase de instrução em prosa |
+
+Fora dessa lista é **mono como fantasia técnica**, e o custo é real: 11px em caixa alta lê
+pior que 12px em sans. Rótulo de prosa usa `text-xs font-semibold text-ink-soft`.
 
 Caminho de volta: internas → `/treino` (via `PageNav`) → `/` (o título do trilho lateral é
 o link para a capa).
@@ -179,8 +196,9 @@ grade de cards de recurso.
   escalonado, `aria-hidden`, terminando em opacidade 1) e o caret pisca. Nenhum conteúdo
   real depende de animação para existir.
 
-Números na capa são conferidos contra o código e o CSV, nunca estimados. N2 e N3 aparecem
-com pastilha `planejado` e a frase explícita de que só o N1 existe.
+Números na capa são conferidos contra o código e o CSV, nunca estimados. N1 e N2 aparecem
+como disponíveis, com link para o treino; **só o N3** leva pastilha `planejado`, e o texto
+diz explicitamente que ele ainda não existe.
 
 ## Proibido neste projeto
 
@@ -213,6 +231,10 @@ com pastilha `planejado` e a frase explícita de que só o N1 existe.
   - alvos de toque: nenhum abaixo de 24px além do link de pular conteúdo, que cresce ao
     receber foco
 - Detector mecânico do skill sobre os arquivos alterados: **zero achados**.
-- Contagens da capa conferidas no código: 3 aulas, 7 laboratórios, 3 chamados, 20
-  questões. O número de vagas foi corrigido de 26 para **30**, que é o que
-  `../mapeamento-empresas-ti/index.csv` tem com `vaga_ativa=sim`.
+- Contagens da capa conferidas no código: **9 aulas, 12 laboratórios, 3 triagens de chamado
+  e 64 questões** (N1 com 5/8/3/40, N2 com 4/4/0/24). O número de vagas mapeadas é **30**,
+  o que o CSV de origem tem com `vaga_ativa=sim`.
+
+> Contagem em documentação envelhece calada. Ao adicionar aula, laboratório ou questão,
+> atualize `src/content/cover.ts`, o `PRODUCT.md` e este arquivo no mesmo commit — os três
+> já mentiram uma vez por terem ficado para trás.

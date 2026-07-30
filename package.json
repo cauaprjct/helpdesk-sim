@@ -2,7 +2,7 @@
   "name": "helpdesk-sim",
   "version": "0.1.0",
   "private": true,
-  "description": "Simulador de treino para Técnico de Informática / Suporte N1 — quizzes, terminal simulado e triagem de chamados",
+  "description": "Simulador de treino para técnico de informática e suporte N1/N2 — aulas, terminal simulado, questionários e triagem de chamados",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

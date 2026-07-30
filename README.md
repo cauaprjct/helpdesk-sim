@@ -1,0 +1,144 @@
+# Treino de suporte técnico — N1 e N2
+
+Simulador de treino para técnico de informática e analista de suporte, em português.
+Aulas, terminal simulado e triagem de chamado.
+
+**Ao vivo:** https://helpdesk-sim-seven.vercel.app
+
+---
+
+## O que é
+
+Três formatos de treino, encadeados nessa ordem — aula, laboratório, questionário. Ensina
+antes de cobrar.
+
+| Formato | O que faz |
+|---|---|
+| **Aula** | Explica o conceito e, principalmente, o **sintoma que ele produz na tela** |
+| **Laboratório** | Uma máquina quebrada e um console que responde ao estado dela |
+| **Triagem de chamado** | Categorizar, priorizar, ordenar o diagnóstico, escalar e registrar |
+
+**N1** cobre atendimento ao usuário: redes, conceitos de help desk, estação Windows,
+impressão e ambiente com domínio.
+**N2** cobre o que chega escalado: identidade e confiança no domínio, permissão a fundo,
+DHCP e DNS pelo lado do servidor, e gestão de problema e mudança.
+
+Conteúdo atual: 9 aulas, 12 laboratórios, 3 triagens, 64 questões.
+
+## O terminal não é maquete
+
+É uma máquina de estados. Cada cenário carrega um estado real — link, IP, DHCP, DNS, GPO,
+serviços, ACL, relógio, canal seguro com o domínio — e os comandos **alteram esse estado**.
+
+```
+C:\Users\paula.reis>ping intranet.lab.local
+
+Disparando intranet.lab.local [10.10.10.20] com 32 bytes de dados:
+Resposta de 10.10.10.112: Host de destino inacessível.
+
+C:\Users\paula.reis>nslookup intranet.lab.local
+
+Não é resposta autoritativa:
+Servidor:  dc01.lab.local
+Address:  10.10.10.10
+
+Nome:    intranet.lab.local
+Address:  10.10.10.10
+```
+
+O `ping` foi para `10.10.10.20` e o `nslookup` respondeu `10.10.10.10`. A divergência é o
+diagnóstico: o `nslookup` consulta o servidor direto e **não lê o cache do cliente**,
+enquanto a resolução do `ping` obedece ao cache. `ipconfig /flushdns` corrige, e o `ping`
+seguinte passa a ir para o endereço certo.
+
+Outros comportamentos que o motor modela em vez de simular por cima:
+
+- `ipconfig /renew` falha e **mantém** o APIPA quando o DHCP não responde, e é **recusado**
+  quando a máquina tem IP fixo
+- `ping` distingue as três falhas — host não encontrado (DNS), tempo limite esgotado
+  (caminho) e host de destino inacessível (sem rota, respondido pela própria máquina)
+- `net stop spooler` devolve **Erro 5, Acesso negado** sem prompt elevado
+- `gpupdate /force` só aplica se a estação alcançar o controlador de domínio
+- `Reset-ComputerMachinePassword` conserta o canal seguro, e o `nltest /sc_verify` seguinte
+  passa a devolver êxito
+
+### Fidelidade da saída
+
+Rótulos e mensagens foram conferidos contra a saída real de um **Windows 10 pt-BR**
+(build 19045) — o que corrigiu invenções como "NetBIOS over Tcpip" no lugar de "NetBIOS em
+Tcpip", e a ausência de "Host de destino inacessível", que é a mensagem mais reveladora das
+três porque quem responde é a própria máquina.
+
+Inventar mensagem de erro do Windows ensina o técnico a reconhecer algo que não existe.
+
+## Como o conteúdo foi escolhido
+
+Não saiu de ementa de curso. Saiu dos requisitos que se repetem em **30 vagas reais de
+técnico de informática e suporte mapeadas no Rio de Janeiro** — LinkedIn, Indeed, InfoJobs,
+Catho, Gupy e Vagas.com. O que aparecia em quase todas virou aula; o que aparecia como
+teste prático virou laboratório.
+
+## Stack
+
+Next.js 16 · React 19 · TypeScript · Tailwind CSS v4 · Vercel
+
+Site estático: **sem backend, sem login, sem banco de dados**. Progresso e preferência de
+tema ficam em `localStorage` — nada sai da máquina de quem usa.
+
+```bash
+npm install
+npm run dev        # http://localhost:3000
+npm run build
+```
+
+## Organização
+
+```
+src/
+  app/               rotas — capa, /treino, /aula, /lab, /quiz, /chamado
+  components/        Cover, Dashboard, LessonView, LabRunner, QuizRunner, TicketTriage
+  content/           TODO o conteúdo, tipado e separado do JSX
+    lessons.ts       aulas em blocos tipados
+    quizzes.ts       questões, com explicação em toda alternativa errada
+    scenarios.ts     laboratórios: estado inicial + diagnósticos + debrief
+    tickets.ts       triagens de chamado
+  lib/
+    terminal-engine.ts   o motor: interpreta comando e muta o estado da máquina
+```
+
+Conteúdo é dado, não markup. Adicionar uma aula é escrever um objeto em `lessons.ts`;
+adicionar um laboratório é declarar um `MachineState` inicial em `scenarios.ts`.
+
+## Design
+
+Sistema documentado em [`DESIGN.md`](./DESIGN.md), verdade de produto em
+[`PRODUCT.md`](./PRODUCT.md).
+
+A decisão central: a interface é clara e institucional — parecida com as ferramentas que se
+usa no trabalho — e **o terminal é o único objeto escuro da tela**. O contraste entre os
+dois é a identidade do produto. Tema claro, escuro e "seguir o sistema", porque o uso real
+é noturno.
+
+Acessibilidade verificada por medição no navegador nos dois temas: corpo de texto acima de
+4.5:1 em todas as rotas, foco visível, navegação por teclado, e `prefers-reduced-motion`
+zerando animação **sem esconder conteúdo**.
+
+## Aviso
+
+É laboratório de treino, não ambiente de produção, e não substitui prática em máquina real.
+Para AD, GPO e DHCP de verdade, monte um domínio em máquina virtual — o simulador ensina a
+ler a saída e a ordem do diagnóstico, não a administrar um servidor.
+
+## Roteiro
+
+- [x] N1 — atendimento ao usuário
+- [x] N2 — o que chega escalado
+- [ ] Backup e restauração, virtualização, VLAN e monitoramento
+- [ ] N3
+
+---
+
+**Cauã Alves** — Desenvolvedor & Técnico de Informática, Rio de Janeiro
+[Portfólio](https://portifolio-caua.vercel.app/) ·
+[GitHub](https://github.com/cauaprjct) ·
+[LinkedIn](https://www.linkedin.com/in/caua-alves-0975a129b/)

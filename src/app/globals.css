@@ -1,0 +1,347 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Sistema visual — ver DESIGN.md
+
+   Cena que decidiu o tema: 21h, quarto em Realengo, desktop, browser numa
+   metade da tela. Ele lê 14 minutos de texto sobre DHCP e depois digita
+   comandos num console. Isso força duas coisas: prosa confortável de ler por
+   muito tempo, e o console tendo que parecer o OBJETO DE ESTUDO, não parte da
+   decoração.
+
+   Daí a decisão central: a interface é clara e institucional — parecida com as
+   ferramentas que ele vai usar no trabalho (GLPI, console do AD, Event Viewer)
+   — e o terminal é o ÚNICO objeto escuro da tela. O contraste entre os dois é
+   a assinatura do produto.
+   ========================================================================== */
+
+@theme {
+  /* --- canvas: branco frio, chroma para o azul da marca. Não é creme. ----- */
+  --color-bg: oklch(0.972 0.004 258);
+  --color-surface: oklch(1 0 0);
+  --color-sunken: oklch(0.953 0.006 258);
+  --color-rail: oklch(0.941 0.008 258);
+
+  /* --- console: o único objeto escuro da interface -------------------------- */
+  --color-console: oklch(0.205 0.02 260);
+  --color-console-2: oklch(0.265 0.022 260);
+  --color-console-line: oklch(0.34 0.024 260);
+  --color-console-ink: oklch(0.93 0.008 258);
+  --color-console-dim: oklch(0.68 0.015 258);
+  /* azul-aço calmo para o prompt: 6:1 sobre o console, sem virar neon */
+  --color-console-accent: oklch(0.72 0.09 245);
+
+  /* --- linhas -------------------------------------------------------------- */
+  --color-line: oklch(0.902 0.008 258);
+  --color-line-2: oklch(0.828 0.014 258);
+
+  /* --- texto: dois tons, os dois passam 4.5:1 ------------------------------ */
+  --color-ink: oklch(0.235 0.022 260);
+  --color-ink-soft: oklch(0.448 0.018 260);
+
+  /* --- acento ------------------------------------------------------------- */
+  --color-accent: oklch(0.475 0.168 262);
+  --color-accent-hi: oklch(0.575 0.17 262);
+  --color-accent-soft: oklch(0.955 0.024 262);
+  --color-accent-line: oklch(0.78 0.085 262);
+
+  /* --- estados: -soft = fundo · -line = borda · -ink = texto legível ------- */
+  --color-ok: oklch(0.545 0.135 155);
+  --color-ok-soft: oklch(0.955 0.036 155);
+  --color-ok-line: oklch(0.8 0.09 155);
+  --color-ok-ink: oklch(0.415 0.105 155);
+
+  --color-warn: oklch(0.7 0.145 78);
+  --color-warn-soft: oklch(0.962 0.045 85);
+  --color-warn-line: oklch(0.84 0.1 82);
+  --color-warn-ink: oklch(0.435 0.095 65);
+
+  --color-bad: oklch(0.575 0.195 24);
+  --color-bad-soft: oklch(0.962 0.028 24);
+  --color-bad-line: oklch(0.83 0.075 24);
+  --color-bad-ink: oklch(0.475 0.175 24);
+
+  /* --- tipografia: superfamília IBM Plex, eixo sans / mono ----------------- */
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "Cascadia Mono", Consolas,
+    monospace;
+
+  /* Escala fixa em rem (registro de produto: nada de clamp fluido) ---------- */
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1.1;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.4;
+  --text-sm: 0.8125rem;
+  --text-sm--line-height: 1.55;
+  --text-base: 0.9375rem;
+  --text-base--line-height: 1.65;
+  --text-lg: 1.0625rem;
+  --text-lg--line-height: 1.6;
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 1.35;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 1.25;
+  --text-3xl: 1.875rem;
+  --text-3xl--line-height: 1.15;
+
+  /* --- movimento ---------------------------------------------------------- */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  :root {
+    /* escala semântica de z-index — nunca 999 */
+    --z-rail: 10;
+    --z-sticky: 20;
+    --z-overlay: 30;
+    --z-toast: 40;
+
+    --dur-fast: 130ms;
+    --dur: 200ms;
+    --dur-slow: 320ms;
+
+    --shadow-panel: 0 1px 2px oklch(0.235 0.02 260 / 0.05);
+    --shadow-console: 0 8px 24px -12px oklch(0.205 0.02 260 / 0.45);
+    /* Bloco de identidade da capa apoiado sobre o campo de console */
+    --shadow-lift: 0 24px 60px -24px oklch(0.15 0.02 260 / 0.55);
+    --color-accent-shade: oklch(0.36 0.15 262);
+  }
+
+  /* ====================================================================
+     Tema escuro.
+
+     Aqui o console deixa de ser o ÚNICO objeto escuro e passa a ser o
+     objeto MAIS FUNDO: a cromaticidade continua a mesma, mas a hierarquia
+     é por profundidade (console 0.155 < rail 0.225 < bg 0.235 <
+     sunken 0.245 < surface 0.275). O console mantém barra de título e
+     borda própria, então continua legível como objeto separado.
+
+     Isso enfraquece um pouco a assinatura do produto — é o preço de
+     poder estudar de madrugada sem tomar um facho de branco na cara.
+     ==================================================================== */
+  [data-theme="dark"] {
+    --color-bg: oklch(0.235 0.018 260);
+    --color-surface: oklch(0.275 0.019 260);
+    --color-sunken: oklch(0.245 0.018 260);
+    --color-rail: oklch(0.225 0.018 260);
+
+    --color-console: oklch(0.155 0.018 260);
+    --color-console-2: oklch(0.205 0.019 260);
+    --color-console-line: oklch(0.3 0.02 260);
+
+    --color-line: oklch(0.34 0.02 260);
+    --color-line-2: oklch(0.425 0.022 260);
+
+    --color-ink: oklch(0.955 0.006 260);
+    --color-ink-soft: oklch(0.765 0.016 260);
+
+    --color-accent: oklch(0.765 0.125 262);
+    --color-accent-hi: oklch(0.83 0.11 262);
+    --color-accent-soft: oklch(0.305 0.048 262);
+    --color-accent-line: oklch(0.455 0.09 262);
+    --color-accent-shade: oklch(0.6 0.11 262);
+
+    --color-ok: oklch(0.63 0.14 155);
+    --color-ok-soft: oklch(0.295 0.05 155);
+    --color-ok-line: oklch(0.425 0.09 155);
+    --color-ok-ink: oklch(0.805 0.13 155);
+
+    --color-warn: oklch(0.755 0.145 78);
+    --color-warn-soft: oklch(0.3 0.05 78);
+    --color-warn-line: oklch(0.45 0.09 78);
+    --color-warn-ink: oklch(0.855 0.125 85);
+
+    --color-bad: oklch(0.635 0.185 24);
+    --color-bad-soft: oklch(0.3 0.06 24);
+    --color-bad-line: oklch(0.445 0.115 24);
+    --color-bad-ink: oklch(0.795 0.135 24);
+
+    --shadow-panel: 0 1px 2px oklch(0.12 0.02 260 / 0.4);
+    --shadow-console: 0 8px 24px -12px oklch(0.1 0.02 260 / 0.6);
+    --shadow-lift: 0 24px 60px -20px oklch(0.06 0.01 260 / 0.75);
+  }
+
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  html[data-theme="dark"] {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+    letter-spacing: -0.015em;
+  }
+
+  /* Foco visível em tudo que é operável */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Dentro do console o acento é escuro demais para o anel de foco aparecer
+     (2.6:1). O acento de console é calibrado em 6:1 sobre aquele fundo. */
+  .console :focus-visible {
+    outline-color: var(--color-console-accent);
+  }
+
+  ::selection {
+    background: var(--color-accent-soft);
+    color: var(--color-ink);
+  }
+
+  /* Placeholder precisa dos mesmos 4.5:1 do corpo de texto */
+  ::placeholder {
+    color: var(--color-ink-soft);
+    opacity: 1;
+  }
+}
+
+@layer components {
+  /* --- prosa das aulas ---------------------------------------------------
+     A coluna é a medida: ~74ch. Em vez de capar cada parágrafo e deixar a
+     direita esfarrapada, tabela e console sangram para a margem — a prosa
+     fica estreita para ler, o dado fica largo para consultar. */
+  .prose-lesson {
+    text-wrap: pretty;
+  }
+
+  .prose-lesson .bleed-right {
+    width: 100%;
+  }
+
+  @media (min-width: 1024px) {
+    .prose-lesson .bleed-right {
+      width: calc(100% + 8rem);
+    }
+  }
+
+  /* --- superfície de console -------------------------------------------- */
+  .console {
+    background-color: var(--color-console);
+    color: var(--color-console-ink);
+    font-family: var(--font-mono);
+    font-variant-ligatures: none;
+  }
+
+  /* --- etiqueta de campo, no vocabulário de ordem de serviço ------------- */
+  .field-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line-2) transparent;
+  }
+
+  .scrollbar-console {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-console-line) transparent;
+  }
+
+  /* Marca de conferido, desenhada em vez de aparecer de uma vez */
+  .draw-check {
+    animation: draw-check var(--dur-slow) var(--ease-out-expo) both;
+  }
+}
+
+@keyframes draw-check {
+  from {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0;
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+
+/* Chegada da transcrição na capa: o movimento nativo de um console é a linha
+   aparecendo. Puro CSS com delay por linha, então renderiza em headless e não
+   depende de classe disparada por scroll. */
+@keyframes console-line-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.console-line-in {
+  animation: console-line-in 200ms linear both;
+}
+
+@keyframes caret-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.caret {
+  animation: caret-blink 1.1s steps(1, end) infinite;
+}
+
+@keyframes reveal-answer {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.reveal-answer {
+  animation: reveal-answer var(--dur) var(--ease-out-quart) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Sem movimento o conteúdo ainda tem que aparecer inteiro */
+  .draw-check,
+  .reveal-answer,
+  .console-line-in,
+  .caret {
+    animation: none;
+    opacity: 1;
+    clip-path: none;
+    transform: none;
+  }
+}

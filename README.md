@@ -162,10 +162,13 @@ não for a que o Windows daria, o treino ensina errado.
 Conteúdo é dado, não markup. Adicionar uma aula é escrever um objeto em `lessons.ts`;
 adicionar um laboratório é declarar um `MachineState` inicial em `scenarios.ts`.
 
-## Design
+## Documentação
 
-Sistema documentado em [`DESIGN.md`](./DESIGN.md), verdade de produto em
-[`PRODUCT.md`](./PRODUCT.md).
+| Arquivo | O que cobre |
+|---|---|
+| [`ARCHITECTURE.md`](./ARCHITECTURE.md) | Como o código funciona, por que é assim, e como adicionar aula, laboratório, questionário, triagem ou comando sem quebrar o que já está garantido |
+| [`DESIGN.md`](./DESIGN.md) | Sistema visual: cor, tipografia, componentes, decisões de tela e o que foi medido no navegador |
+| [`PRODUCT.md`](./PRODUCT.md) | Verdade de produto: para quem, com que promessa, o que existe como evidência e o que não pode ser inventado |
 
 A decisão central: a interface é clara e institucional — parecida com as ferramentas que se
 usa no trabalho — e **o terminal é o único objeto escuro da tela**. O contraste entre os

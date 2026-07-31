@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ArrowRight, BookOpen, Check, RotateCcw, X } from "lucide-react";
 import type { Ticket, TriageStep } from "@/content/types";
 import { saveAttempt } from "@/lib/progress";
+import { shuffleFor } from "@/lib/shuffle";
 import PageNav from "./PageNav";
 import { Button, ButtonLink, Chip, Meter } from "./ui";
 import { cn } from "@/lib/cn";
@@ -168,6 +169,13 @@ function ChoiceStep({
   const [picked, setPicked] = useState<string | null>(null);
   const revealed = picked !== null;
 
+  /**
+   * A opção correta foi escrita primeiro em todas as etapas de escolha. Sem
+   * redistribuir, a triagem se resolve clicando sempre na primeira. Ordem
+   * determinística pelo id da etapa, para não divergir na hidratação.
+   */
+  const options = useMemo(() => shuffleFor(step.options, step.id), [step]);
+
   function choose(id: string) {
     if (revealed) return;
     setPicked(id);
@@ -178,7 +186,7 @@ function ChoiceStep({
     <div>
       <StepHead question={step.question} help={step.help} />
       <ul className="mt-5 divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
-        {step.options.map((o) => {
+        {options.map((o) => {
           const isPicked = picked === o.id;
           const showRight = revealed && o.correct;
           const showWrong = revealed && isPicked && !o.correct;

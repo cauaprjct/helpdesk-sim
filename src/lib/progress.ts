@@ -61,9 +61,18 @@ export function getProgress(): ProgressState {
   return read();
 }
 
+/**
+ * Registra a tentativa e atualiza a fila de revisão.
+ *
+ * A regra é: errou entra, acertou sai. Sem receber os acertos não há como
+ * tirar nada da fila, e ela cresceria para sempre — a questão dominada
+ * continuaria voltando, que é justamente o que desqualifica um modo de
+ * revisão.
+ */
 export function saveAttempt(
   attempt: Omit<Attempt, "at">,
   wrongIds: string[] = [],
+  rightIds: string[] = [],
 ) {
   const state = read();
   state.attempts = [
@@ -71,20 +80,17 @@ export function saveAttempt(
     ...state.attempts,
   ].slice(0, 200);
 
-  // acertou = sai da fila de revisão; errou = entra
   const wrong = new Set(state.wrongQuestions);
+  for (const id of rightIds) wrong.delete(id);
   for (const id of wrongIds) wrong.add(id);
   state.wrongQuestions = [...wrong];
 
   write(state);
 }
 
-export function clearWrong(ids: string[]) {
-  const state = read();
-  const wrong = new Set(state.wrongQuestions);
-  for (const id of ids) wrong.delete(id);
-  state.wrongQuestions = [...wrong];
-  write(state);
+/** Ids das questões na fila de revisão. */
+export function getWrongQuestions(): string[] {
+  return read().wrongQuestions;
 }
 
 export function markLessonRead(id: string) {
@@ -97,14 +103,6 @@ export function markLessonRead(id: string) {
 
 export function isLessonRead(id: string): boolean {
   return read().readLessons.includes(id);
-}
-
-export function bestScore(ref: string): Attempt | null {
-  const attempts = read().attempts.filter((a) => a.ref === ref);
-  if (attempts.length === 0) return null;
-  return attempts.reduce((best, a) =>
-    a.score / a.total > best.score / best.total ? a : best,
-  );
 }
 
 export function resetAll() {

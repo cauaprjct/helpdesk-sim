@@ -18,6 +18,13 @@ antes de cobrar.
 | **Laboratório** | Uma máquina quebrada e um console que responde ao estado dela |
 | **Triagem de chamado** | Categorizar, priorizar, ordenar o diagnóstico, escalar e registrar |
 
+Fora dessa sequência, duas telas sem pré-requisito:
+
+| Tela | O que faz |
+|---|---|
+| **[Terminal livre](https://helpdesk-sim-seven.vercel.app/terminal)** | Escolhe entre 13 máquinas quebradas e investiga no prompt, com o estado da máquina à vista ao lado do console. Sem chamado, sem gabarito, sem cadastro |
+| **Revisão** | As questões que você errou voltam misturadas, fora da trilha de origem. Sai da fila só o que você acerta |
+
 **N1** cobre atendimento ao usuário: redes, conceitos de help desk, estação Windows,
 impressão e ambiente com domínio.
 **N2** cobre o que chega escalado: identidade e confiança no domínio, permissão a fundo,
@@ -29,6 +36,10 @@ Conteúdo atual: 9 aulas, 12 laboratórios, 3 triagens, 64 questões.
 
 É uma máquina de estados. Cada cenário carrega um estado real — link, IP, DHCP, DNS, GPO,
 serviços, ACL, relógio, canal seguro com o domínio — e os comandos **alteram esse estado**.
+
+Dá para conferir sem ler nada antes: em
+**[/terminal](https://helpdesk-sim-seven.vercel.app/terminal)** o estado da máquina fica
+visível ao lado do console, e o campo que um comando altera acende.
 
 ```
 C:\Users\paula.reis>ping intranet.lab.local
@@ -89,22 +100,46 @@ tema ficam em `localStorage` — nada sai da máquina de quem usa.
 npm install
 npm run dev        # http://localhost:3000
 npm run build
+npm test           # 168 testes, sem DOM: motor, conteúdo e embaralhamento
 ```
 
 ## Organização
 
 ```
 src/
-  app/               rotas — capa, /treino, /aula, /lab, /quiz, /chamado
-  components/        Cover, Dashboard, LessonView, LabRunner, QuizRunner, TicketTriage
+  app/               rotas — capa, /treino, /aula, /lab, /quiz, /chamado,
+                     /terminal (livre), /revisao
+  components/        Cover, Dashboard, LessonView, LabRunner, QuizRunner,
+                     TicketTriage, Sandbox, Review, Console
   content/           TODO o conteúdo, tipado e separado do JSX
     lessons.ts       aulas em blocos tipados
     quizzes.ts       questões, com explicação em toda alternativa errada
     scenarios.ts     laboratórios: estado inicial + diagnósticos + debrief
     tickets.ts       triagens de chamado
+    sandbox.ts       estados de máquina do terminal livre
   lib/
     terminal-engine.ts   o motor: interpreta comando e muta o estado da máquina
+    shuffle.ts           ordem determinística das alternativas
+    progress.ts          progresso e fila de revisão, em localStorage
 ```
+
+O `Console` é um componente só, usado pelo laboratório e pelo terminal livre. Ele guarda o
+log e o histórico; o estado da máquina fica com quem o usa, porque é quem reage a ele.
+
+### Testes
+
+O motor é função pura: `runCommand(comando, estado)` devolve as linhas e o próximo estado.
+Isso o torna testável sem navegador, e é onde mora a credibilidade do projeto — se a saída
+não for a que o Windows daria, o treino ensina errado.
+
+- **`terminal-engine.test.ts`** — fidelidade das mensagens em pt-BR, causalidade entre
+  estado e saída, e o contrato com o conteúdo: todo comando que um laboratório cobra como
+  evidência tem que ser produzível naquele cenário.
+- **`content.test.ts`** — coerência que o tipo não pega: questão sem alternativa correta,
+  aula apontando para laboratório inexistente, contagem da capa atrasada em relação ao
+  conteúdo.
+- **`shuffle.test.ts`** — determinismo (a página é estática, então servidor e cliente
+  precisam da mesma ordem) e distribuição.
 
 Conteúdo é dado, não markup. Adicionar uma aula é escrever um objeto em `lessons.ts`;
 adicionar um laboratório é declarar um `MachineState` inicial em `scenarios.ts`.

@@ -5,6 +5,7 @@ import { ArrowRight, BookOpen, Check, Key, RotateCcw, X } from "lucide-react";
 import type { Quiz } from "@/content/types";
 import { getLesson } from "@/content/lessons";
 import { saveAttempt } from "@/lib/progress";
+import { OPTION_LETTERS, shuffleFor } from "@/lib/shuffle";
 import PageNav from "./PageNav";
 import { Button, ButtonLink, Chip, Meter } from "./ui";
 import { cn } from "@/lib/cn";
@@ -14,11 +15,21 @@ export default function QuizRunner({ quiz }: { quiz: Quiz }) {
   const [picked, setPicked] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Record<string, boolean>>({});
   const [finished, setFinished] = useState(false);
+  /** Refazer muda a ordem das alternativas, para não decorar posição. */
+  const [round, setRound] = useState(0);
 
   const lesson = getLesson(quiz.id);
   const q = quiz.questions[index];
   const revealed = picked !== null;
   const total = quiz.questions.length;
+
+  /**
+   * A alternativa correta foi escrita primeiro em todas as questões. Sem
+   * redistribuir, o questionário se resolve clicando sempre na primeira.
+   * O embaralhamento é determinístico por id para não quebrar a hidratação da
+   * página estática.
+   */
+  const shown = useMemo(() => shuffleFor(q.options, q.id, round), [q, round]);
   const correctCount = useMemo(
     () => Object.values(answers).filter(Boolean).length,
     [answers],
@@ -43,9 +54,11 @@ export default function QuizRunner({ quiz }: { quiz: Quiz }) {
       return;
     }
     const wrongIds = quiz.questions.filter((qq) => !answers[qq.id]).map((qq) => qq.id);
+    const rightIds = quiz.questions.filter((qq) => answers[qq.id]).map((qq) => qq.id);
     saveAttempt(
       { ref: `quiz:${quiz.id}`, kind: "quiz", score: correctCount, total },
       wrongIds,
+      rightIds,
     );
     setFinished(true);
   }, [picked, index, total, quiz, answers, correctCount]);
@@ -63,21 +76,24 @@ export default function QuizRunner({ quiz }: { quiz: Quiz }) {
         next();
         return;
       }
-      const letter = e.key.toLowerCase();
-      if (q.options.some((o) => o.id === letter)) {
+      // A letra digitada é a POSIÇÃO na tela, não o id da alternativa — depois
+      // do embaralhamento os dois não coincidem mais.
+      const pos = OPTION_LETTERS.indexOf(e.key.toLowerCase());
+      if (pos >= 0 && pos < shown.length) {
         e.preventDefault();
-        choose(letter);
+        choose(shown[pos].id);
       }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [finished, q, choose, next]);
+  }, [finished, shown, choose, next]);
 
   function restart() {
     setIndex(0);
     setPicked(null);
     setAnswers({});
     setFinished(false);
+    setRound((n) => n + 1);
   }
 
   /* ------------------------------------------------------------ resultado */
@@ -180,7 +196,7 @@ export default function QuizRunner({ quiz }: { quiz: Quiz }) {
         <h1 className="mt-4 max-w-[56ch] text-2xl font-semibold">{q.prompt}</h1>
 
         <ul className="mt-6 divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
-          {q.options.map((o) => {
+          {shown.map((o, i) => {
             const isPicked = picked === o.id;
             const showRight = revealed && o.correct;
             const showWrong = revealed && isPicked && !o.correct;
@@ -216,7 +232,7 @@ export default function QuizRunner({ quiz }: { quiz: Quiz }) {
                     ) : showWrong ? (
                       <X className="size-3.5" strokeWidth={3} />
                     ) : (
-                      o.id.toUpperCase()
+                      OPTION_LETTERS[i].toUpperCase()
                     )}
                   </span>
                   <span className="min-w-0 flex-1">
@@ -246,7 +262,9 @@ export default function QuizRunner({ quiz }: { quiz: Quiz }) {
             <ArrowRight className="size-4" aria-hidden="true" />
           </Button>
           <p className="font-mono text-2xs text-ink-soft">
-            {revealed ? "enter avança" : "a b c d responde"}
+            {revealed
+              ? "enter avança"
+              : `${[...OPTION_LETTERS.slice(0, shown.length)].join(" ")} responde`}
           </p>
         </div>
       </div>

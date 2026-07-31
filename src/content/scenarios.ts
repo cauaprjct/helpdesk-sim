@@ -5,7 +5,15 @@ import type { MachineState, Scenario } from "./types";
  * O treino é: diagnosticar pelo terminal ANTES de responder qual é a causa.
  */
 
-function machine(over: Partial<MachineState> = {}): MachineState {
+/**
+ * Estado base: uma estação saudável do domínio. Cada cenário quebra uma coisa
+ * a partir daqui.
+ *
+ * Exportado porque o sandbox de terminal e os testes do motor montam estado em
+ * cima da MESMA base. Se cada um tivesse a sua, os três iam divergir em
+ * silêncio e o teste deixaria de provar algo sobre o que roda no site.
+ */
+export function machine(over: Partial<MachineState> = {}): MachineState {
   return {
     hostname: "PC-FIN-07",
     user: "ana.souza",

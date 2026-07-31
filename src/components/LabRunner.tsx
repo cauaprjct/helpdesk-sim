@@ -1,100 +1,37 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { BookOpen, Check, Eye, RotateCcw, SquareTerminal, X } from "lucide-react";
+import { BookOpen, Check, Eye, RotateCcw, X } from "lucide-react";
 import type { Scenario } from "@/content/types";
 import { LESSONS } from "@/content/lessons";
-import { runCommand } from "@/lib/terminal-engine";
 import { saveAttempt } from "@/lib/progress";
+import { shuffleFor } from "@/lib/shuffle";
+import Console from "./Console";
 import PageNav from "./PageNav";
 import { Button, ButtonLink, Chip } from "./ui";
 import { cn } from "@/lib/cn";
-
-interface Line {
-  kind: "cmd" | "out";
-  text: string;
-}
-
-const BANNER: Line[] = [
-  { kind: "out", text: "Microsoft Windows [versão 10.0.19045.5011]" },
-  { kind: "out", text: "(c) Microsoft Corporation. Todos os direitos reservados." },
-  { kind: "out", text: "" },
-  { kind: "out", text: "Digite `help` para ver os comandos disponíveis." },
-  { kind: "out", text: "" },
-];
 
 export default function LabRunner({ scenario }: { scenario: Scenario }) {
   const lesson = LESSONS.find((l) => (l.nextLabIds ?? []).includes(scenario.id));
 
   const [state, setState] = useState(scenario.initial);
-  const [lines, setLines] = useState<Line[]>(BANNER);
-  const [input, setInput] = useState("");
-  const [history, setHistory] = useState<string[]>([]);
-  const [histPos, setHistPos] = useState<number | null>(null);
   const [used, setUsed] = useState<Set<string>>(new Set());
   const [hintOpen, setHintOpen] = useState(false);
   const [picked, setPicked] = useState<string | null>(null);
+  /** Trocar a chave do console remonta e zera o log junto com o cenário. */
+  const [runId, setRunId] = useState(0);
 
-  const logRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    logRef.current?.scrollTo({ top: logRef.current.scrollHeight });
-  }, [lines]);
-
-  const prompt = `C:\\Users\\${state.user}>`;
-
-  function submit(raw: string) {
-    const cmd = raw.trim();
-    const res = runCommand(cmd, state);
-
-    if (res.clear) {
-      setLines([]);
-      setInput("");
-      return;
-    }
-
-    setLines((prev) => [
-      ...prev,
-      { kind: "cmd" as const, text: `${prompt}${cmd}` },
-      ...res.lines.map((l) => ({ kind: "out" as const, text: l })),
-    ]);
-    setState(res.next);
-    if (res.matched) setUsed((prev) => new Set(prev).add(res.matched!));
-    if (cmd) setHistory((prev) => [cmd, ...prev].slice(0, 50));
-    setHistPos(null);
-    setInput("");
-  }
-
-  function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      submit(input);
-      return;
-    }
-    if (e.key === "ArrowUp") {
-      e.preventDefault();
-      const nextPos = histPos === null ? 0 : Math.min(histPos + 1, history.length - 1);
-      if (history[nextPos] !== undefined) {
-        setHistPos(nextPos);
-        setInput(history[nextPos]);
-      }
-      return;
-    }
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      if (histPos === null) return;
-      const nextPos = histPos - 1;
-      if (nextPos < 0) {
-        setHistPos(null);
-        setInput("");
-      } else {
-        setHistPos(nextPos);
-        setInput(history[nextPos]);
-      }
-    }
-  }
+  /**
+   * O diagnóstico correto foi escrito primeiro em todos os doze cenários. Sem
+   * redistribuir, o laboratório se resolve escolhendo a primeira opção sem
+   * abrir o terminal — o oposto do que ele treina. Determinístico por id para
+   * não divergir na hidratação; refazer muda a ordem.
+   */
+  const diagnoses = useMemo(
+    () => shuffleFor(scenario.diagnoses, scenario.id, runId),
+    [scenario, runId],
+  );
 
   const evidence = scenario.expectedCommands.filter((c) => used.has(c));
   const answered = picked !== null;
@@ -115,12 +52,10 @@ export default function LabRunner({ scenario }: { scenario: Scenario }) {
 
   function reset() {
     setState(scenario.initial);
-    setLines(BANNER);
     setUsed(new Set());
     setPicked(null);
     setHintOpen(false);
-    setInput("");
-    inputRef.current?.focus();
+    setRunId((n) => n + 1);
   }
 
   return (
@@ -143,66 +78,12 @@ export default function LabRunner({ scenario }: { scenario: Scenario }) {
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_296px]">
         {/* ================================================ console (a peça) */}
         <section aria-label="Terminal simulado" className="min-w-0">
-          {/* A borda própria é o que mantém o console legível como objeto
-              separado no tema escuro, onde a sombra não aparece. */}
-          <div className="console overflow-hidden rounded-lg border border-console-line shadow-[var(--shadow-console)]">
-            <div className="flex items-center gap-2 border-b border-console-line bg-console-2 px-4 py-2">
-              <SquareTerminal
-                className="size-3.5 text-console-dim"
-                aria-hidden="true"
-              />
-              <span className="text-2xs tracking-wide text-console-dim">
-                {state.hostname}
-                {state.domain ? `.${state.domain}` : ""} — Prompt de Comando
-              </span>
-              <span className="ml-auto text-2xs text-console-dim">simulado</span>
-            </div>
-
-            <div
-              ref={logRef}
-              className="scrollbar-console h-[clamp(340px,52vh,560px)] overflow-y-auto px-4 py-3 text-[13px] leading-relaxed"
-              role="log"
-              aria-live="polite"
-              aria-label="Saída do terminal"
-              onClick={() => inputRef.current?.focus()}
-            >
-              {lines.map((l, i) => (
-                <pre
-                  key={i}
-                  className={cn(
-                    "-mx-2 px-2 whitespace-pre-wrap break-words",
-                    l.kind === "cmd"
-                      ? "bg-console-ink/[0.055] font-medium text-console-ink"
-                      : "text-console-ink/90",
-                  )}
-                >
-                  {l.text || " "}
-                </pre>
-              ))}
-            </div>
-
-            <div className="flex items-center gap-2 border-t border-console-line px-4 py-3 text-[13px]">
-              <label htmlFor="cmd" className="shrink-0 text-console-accent">
-                {prompt}
-              </label>
-              <input
-                id="cmd"
-                ref={inputRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={onKeyDown}
-                autoComplete="off"
-                spellCheck={false}
-                placeholder="ipconfig /all"
-                /* placeholder também precisa dos 4.5:1 — sem opacidade aqui */
-                className="min-w-0 flex-1 bg-transparent font-mono text-console-ink caret-console-accent outline-none placeholder:text-console-dim"
-                aria-describedby="cmd-help"
-              />
-            </div>
-          </div>
-          <p id="cmd-help" className="mt-2 font-mono text-2xs text-ink-soft">
-            enter executa · ↑ repete o último · help lista tudo · cls limpa
-          </p>
+          <Console
+            key={runId}
+            state={state}
+            onState={setState}
+            onMatched={(label) => setUsed((prev) => new Set(prev).add(label))}
+          />
         </section>
 
         {/* ============================================ ordem de serviço */}
@@ -293,7 +174,7 @@ export default function LabRunner({ scenario }: { scenario: Scenario }) {
         </p>
 
         <ul className="mt-5 divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
-          {scenario.diagnoses.map((d) => {
+          {diagnoses.map((d) => {
             const isPicked = picked === d.id;
             const showRight = answered && d.correct;
             const showWrong = answered && isPicked && !d.correct;

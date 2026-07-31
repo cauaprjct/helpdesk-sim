@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, ExternalLink, Github, Linkedin } from "lucide-react";
+import { ArrowRight, ExternalLink, Github, Linkedin, SquareTerminal } from "lucide-react";
 import {
   AUTHOR,
   isCmdLine,
@@ -75,21 +75,23 @@ export default function Cover() {
                 uma ementa diz que ela cobra.
               </p>
 
+              {/* Duas ações, e a segunda é o terminal: entrar no treino é um
+                  compromisso, e quem chega só para ver o que é isto precisa de
+                  uma porta sem compromisso nenhum. O portfólio desceu para o
+                  bloco de assinatura, que é onde "quem fez" já mora. */}
               <div className="mt-7 flex flex-wrap items-center gap-3">
                 <ButtonLink href="/treino">
                   Entrar no treino
                   <ArrowRight className="size-4" aria-hidden="true" />
                 </ButtonLink>
-                <ButtonLink
-                  tone="secondary"
-                  href={LINKS.portfolio}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Ver o portfólio
-                  <ExternalLink className="size-3.5" aria-hidden="true" />
+                <ButtonLink tone="secondary" href="/terminal">
+                  <SquareTerminal className="size-4" aria-hidden="true" />
+                  Abrir o terminal
                 </ButtonLink>
               </div>
+              <p className="mt-3 text-sm text-ink-soft">
+                O terminal abre direto, sem cadastro e sem aula antes.
+              </p>
 
               {/* Assinatura. É aqui que o retrato entra quando existir. */}
               <div className="mt-8 border-t border-line pt-6">
@@ -100,6 +102,17 @@ export default function Cover() {
                 {/* py-1.5 e gap-y-1 para o alvo de toque passar de 24px de
                     altura e os links não se encostarem quando a lista quebra. */}
                 <ul className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm">
+                  <li>
+                    <a
+                      href={LINKS.portfolio}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 py-1.5 font-medium text-accent hover:underline"
+                    >
+                      Portfólio
+                      <ExternalLink className="size-3.5" aria-hidden="true" />
+                    </a>
+                  </li>
                   <li>
                     <a
                       href={LINKS.github}
@@ -163,6 +176,15 @@ export default function Cover() {
               ipconfig /flushdns
             </code>{" "}
             conserta de verdade e a consulta seguinte passa a resolver.
+          </p>
+          <p className="mt-5">
+            <Link
+              href="/terminal"
+              className="inline-flex items-center gap-1.5 font-medium text-accent hover:underline"
+            >
+              Testar isso agora, num terminal solto
+              <ArrowRight className="size-4" aria-hidden="true" />
+            </Link>
           </p>
         </div>
 
@@ -277,6 +299,14 @@ export default function Cover() {
                 className="inline-block py-1.5 text-ink-soft transition-colors hover:text-accent"
               >
                 Treino
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/terminal"
+                className="inline-block py-1.5 text-ink-soft transition-colors hover:text-accent"
+              >
+                Terminal
               </Link>
             </li>
           </ul>

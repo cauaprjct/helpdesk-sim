@@ -64,6 +64,18 @@ Terceiro: ensina antes de cobrar. Aula → laboratório → questionário, nessa
 - **N2** — 4 aulas (identidade e confiança, permissão a fundo, DHCP/DNS no servidor,
   problema e mudança), 4 laboratórios, 24 questões.
 - Total: 9 aulas, 12 laboratórios, 3 triagens, 64 questões.
+- **Fora das trilhas, duas superfícies sem pré-requisito:**
+  - `/terminal` — terminal livre. 13 estados de máquina para escolher, sem chamado, sem
+    diagnóstico e sem placar, com o estado da máquina à vista ao lado do console. Existe
+    para quem chega de fora poder usar a peça central em dez segundos. É o link a colar em
+    LinkedIn e portfólio.
+  - `/revisao` — as questões erradas de qualquer trilha voltam misturadas, fora do contexto
+    de origem. Sai da fila só o que for acertado.
+- **A alternativa correta é redistribuída na tela.** No conteúdo-fonte ela foi escrita
+  primeiro em 100% dos exercícios (64 questões, 12 diagnósticos, 8 escolhas de chamado) —
+  vício de autoria que permitia gabaritar tudo clicando sempre na primeira opção. A ordem é
+  embaralhada de forma determinística pelo id, e refazer muda a ordem. Determinística porque
+  as páginas são estáticas: sorteio em tempo de render divergiria na hidratação.
 - O N2 **não** é o N1 mais difícil. É outro trabalho: os cenários chegam escalados, com o
   briefing dizendo o que o N1 já testou e descartou, e a resposta nunca está na conta do
   usuário nem na rede. Cenário de N2 que pudesse ser resolvido por um N1 está mal escrito.
@@ -71,10 +83,16 @@ Terceiro: ensina antes de cobrar. Aula → laboratório → questionário, nessa
   disponível.
 - Comandos simulados hoje: família `ipconfig` (incluindo `/displaydns`), `ping`, `tracert`,
   `nslookup`, `getmac`, `arp`, `net use`, `sc query`, `net start/stop`, `gpupdate`,
-  `gpresult`, `hostname`, `whoami`.
-- Operação em serviço exige `elevated: true` no cenário. Só o laboratório de impressão tem,
-  e o briefing dele diz explicitamente que o prompt foi aberto como administrador — nos
-  outros o "Erro 5, Acesso negado" é conteúdo, não defeito.
+  `gpresult`, `hostname`, `whoami` e, no N2, `nltest`, `klist`, `w32tm`,
+  `Reset-ComputerMachinePassword`, `icacls`, `Get-DhcpServerv4ScopeStatistics`.
+- Operação em serviço exige `elevated: true`. Os cenários que precisam disso já entregam o
+  prompt elevado, e o briefing diz que ele foi aberto como administrador; onde não há, o
+  "Erro 5, Acesso negado" é conteúdo, não defeito. No terminal livre a elevação é um
+  interruptor, justamente para a diferença ficar visível nos dois modos.
+- **Alcance na LAN não depende do gateway.** O controlador de domínio está na mesma
+  sub-rede: quem derruba o acesso a ele é o próprio host sair do ar, não o roteador. O
+  gateway só entra para sair da sub-rede. Confundir os dois faz o técnico culpar o
+  equipamento errado, nos dois sentidos.
 - **Fidelidade da saída:** os rótulos e mensagens do motor foram conferidos contra a saída
   real de um Windows 10 pt-BR (build 19045). Qualquer string nova precisa do mesmo
   tratamento — inventar mensagem de erro do Windows ensina o técnico a reconhecer algo que
@@ -93,9 +111,14 @@ Terceiro: ensina antes de cobrar. Aula → laboratório → questionário, nessa
 
 ## Evidence on Hand
 
-- **Real e usável:** o próprio produto (o motor de terminal é demonstrável ao vivo); o
-  mapeamento de 30 vagas em `../mapeamento-empresas-ti/index.csv`; a contagem de conteúdo
-  do N1 e do N2.
+- **Real e usável:** o próprio produto (o motor de terminal é demonstrável ao vivo em
+  `/terminal`, sem cadastro); o mapeamento de 30 vagas em
+  `../mapeamento-empresas-ti/index.csv`; a contagem de conteúdo do N1 e do N2; a suíte de
+  **168 testes** (`npm test`), que cobre a fidelidade da saída do motor, a coerência do
+  conteúdo e a redistribuição das alternativas.
+- **A capa não pode mentir sobre os números.** As contagens anunciadas em `N1_INVENTORY`
+  são verificadas por teste contra o conteúdo real. Elas já ficaram atrás uma vez; num
+  portfólio esse é o pior tipo de erro, porque é conferível em dois cliques.
 - **Existe fora deste repositório e fica fora do produto por decisão:** um diagnóstico de
   conhecimento pessoal que originou a lista de assuntos. O resultado dele **não** aparece em
   nenhuma superfície nem nesta documentação: a audiência primária é recrutador, e a origem
@@ -107,13 +130,16 @@ Terceiro: ensina antes de cobrar. Aula → laboratório → questionário, nessa
 ## Product Principles
 
 1. **Provar, não afirmar.** O produto tem um motor demonstrável; mostrar valendo é sempre
-   melhor que descrever.
+   melhor que descrever. É por isso que existe uma porta sem pré-requisito para ele.
 2. **Ensinar antes de cobrar.** Nenhuma cobrança sem a explicação disponível antes dela.
-3. **Honestidade sobre o que é laboratório.** O treino não finge ser experiência de
+3. **O exercício não pode ter atalho.** Se dá para acertar sem ler — pela posição da
+   alternativa, pelo tamanho do texto, por eliminação boba — o exercício está quebrado,
+   mesmo que o conteúdo esteja certo.
+4. **Honestidade sobre o que é laboratório.** O treino não finge ser experiência de
    produção, e a página não finge que o N3 existe.
-4. **Vocabulário do trabalho real.** Chamado, evidência, escalonamento, ordem de serviço —
+5. **Vocabulário do trabalho real.** Chamado, evidência, escalonamento, ordem de serviço —
    os termos vêm das vagas, não de gamificação.
-5. **Nada de dado do usuário.** Sem login e sem servidor é decisão de produto, não
+6. **Nada de dado do usuário.** Sem login e sem servidor é decisão de produto, não
    limitação a esconder.
 
 ## Accessibility & Inclusion

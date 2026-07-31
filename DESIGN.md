@@ -181,8 +181,13 @@ grade de cards de recurso.
   `dhcp-caiu`, reproduzida do motor real e condensada para caber. Isso não fura a regra do
   material escuro — é console, o material escuro autorizado, promovido a página inteira.
 - Sobre ele, à esquerda, o **bloco de identidade**: título, uma linha de oferta, ação
-  primária `Entrar no treino`, secundária para o portfólio, e a assinatura no pé do bloco.
+  primária `Entrar no treino`, secundária `Abrir o terminal`, e a assinatura no pé do bloco.
   Opaco, nunca vidro.
+- **A segunda ação é o terminal, não o portfólio.** Entrar no treino é um compromisso; quem
+  chega só para ver o que é isto precisa de uma porta sem compromisso nenhum, e o terminal é
+  o que convence em dez segundos quem entende de TI. O portfólio desceu para o bloco de
+  assinatura, ao lado de GitHub e LinkedIn — que é onde "quem fez" já mora — e segue no
+  rodapé. Três botões na mesma fileira achatavam a hierarquia.
 - **Véu de legibilidade em duas camadas** em vez de opacidade no texto: atenuação uniforme
   (`bg-console/45`) mais fechamento nos 45% de baixo, onde o bloco se apoia.
 - Dentro do campo de console o **anel de foco troca para `console-accent`** — o acento
@@ -199,6 +204,51 @@ grade de cards de recurso.
 Números na capa são conferidos contra o código e o CSV, nunca estimados. N1 e N2 aparecem
 como disponíveis, com link para o treino; **só o N3** leva pastilha `planejado`, e o texto
 diz explicitamente que ele ainda não existe.
+
+## O terminal livre (`/terminal`)
+
+Mesma peça, moldura oposta à do laboratório. O laboratório **esconde** o estado da máquina,
+porque descobri-lo pela resposta dos comandos é o exercício. Aqui o estado fica **à vista**,
+ao lado do console, porque o que se demonstra é o mecanismo: comando lê estado, alguns
+comandos escrevem nele, e a saída muda por causa disso — não por roteiro.
+
+- O painel de estado separa **"a estação"** (o que os comandos leem) de **"a rede"** (o que
+  ela não vê e só infere). Essa divisão é o desenho do motor exposto de propósito.
+- Campo cujo valor saiu do estado carregado ganha **acento e um ponto**. É a prova visível
+  de que o console escreveu no estado, e não só imprimiu texto.
+- A elevação é **interruptor**, não propriedade do cenário: rodar `net start spooler` nos
+  dois modos e comparar é a lição, e ela só existe se der para alternar.
+- Texto acima do console fica no mínimo — um parágrafo. A ressalva de que nada executa de
+  verdade desceu para debaixo do console, onde é relevante e não atrasa a chegada.
+- **Sem separador entre grupos de máquina.** As pastilhas quebram de linha, e o traço
+  acabava caindo no meio de um grupo, sinalizando errado. A categoria da máquina escolhida
+  aparece como pastilha ao lado da descrição.
+
+O console em si virou componente único (`Console.tsx`), consumido pelo laboratório e pelo
+terminal livre. Duplicado, histórico, rolagem e acessibilidade seriam corrigidos em um lado
+e esquecidos no outro. Ele guarda o log e o histórico; o estado da máquina é do pai, porque
+é o pai que reage a ele. Para zerar, o pai troca a `key`.
+
+## Ordem das alternativas
+
+A alternativa correta foi escrita **primeiro em 100% dos exercícios** — 64 questões, 12
+diagnósticos e 8 escolhas de chamado. É vício de autoria: escreve-se a resposta certa e
+depois inventam-se os distratores. O efeito é que dava para gabaritar o produto inteiro
+clicando sempre na primeira opção, sem ler nada.
+
+A ordem passou a ser embaralhada em `src/lib/shuffle.ts`, e **determinística pelo id**: as
+páginas são pré-renderizadas, então sorteio em tempo de render daria um HTML no servidor e
+outro no cliente. Refazer o exercício incrementa a rodada e muda a ordem, o que também evita
+decorar posição.
+
+As **letras na tela seguem a posição** (A, B, C, D de cima para baixo), não o id da
+alternativa — depois de embaralhar os dois não coincidem, e mostrar "C, A, D, B" pareceria
+defeito. O atalho de teclado passou a mapear posição, não id.
+
+Detalhe que só apareceu medindo: a primeira versão usava `% (i + 1)` sobre os bits baixos do
+gerador congruente, e a primeira posição ficou com **42%** das respostas certas em vez de
+25%. Bits baixos de LCG são periódicos. Escalar pelo intervalo inteiro usa os bits altos, e
+a distribuição fechou em 25/14/19/25.
 
 ## Proibido neste projeto
 
@@ -234,7 +284,21 @@ diz explicitamente que ele ainda não existe.
 - Contagens da capa conferidas no código: **9 aulas, 12 laboratórios, 3 triagens de chamado
   e 64 questões** (N1 com 5/8/3/40, N2 com 4/4/0/24). O número de vagas mapeadas é **30**,
   o que o CSV de origem tem com `vaga_ativa=sim`.
+- **Suíte automatizada: 168 testes** (`npm test`), em três arquivos — motor do terminal,
+  coerência do conteúdo, embaralhamento. Cobre a fidelidade das mensagens do Windows, a
+  causalidade entre estado e saída, referências de aula para quiz e laboratório, e as
+  contagens da capa contra o conteúdo real.
+- **Terminal livre, medido no navegador:** carregar "Cache de DNS velho", rodar
+  `ping intranet.lab.local` → vai para 10.10.10.60; `nslookup` → devolve 10.10.10.10, o
+  certo; `ipconfig /flushdns` → o campo `cache de DNS sujo` muda de `sim (10.10.10.60)` para
+  `não` **e acende destacado**. Elevação: `net start spooler` como usuário comum dá
+  `Erro do sistema 5 / Acesso negado`; alternando para administrador o serviço sobe, os
+  campos `serviços parados`, `fila de impressão` e `prompt elevado` mudam juntos.
+- **Ordem das alternativas, medida na interface:** clicar sempre na primeira alternativa no
+  quiz `redes-n1` acertou **3 de 10 (30%)**, contra 100% antes. Letras exibidas seguem
+  A B C D. Zero erro de console, sem divergência de hidratação.
 
 > Contagem em documentação envelhece calada. Ao adicionar aula, laboratório ou questão,
 > atualize `src/content/cover.ts`, o `PRODUCT.md` e este arquivo no mesmo commit — os três
-> já mentiram uma vez por terem ficado para trás.
+> já mentiram uma vez por terem ficado para trás. As contagens da capa agora têm teste, mas
+> a prosa destes dois arquivos não tem.

@@ -8,6 +8,7 @@ import {
   Check,
   ChevronRight,
   ListChecks,
+  Repeat,
   Terminal,
   Ticket as TicketIcon,
   Trash2,
@@ -81,6 +82,9 @@ export default function Dashboard() {
     const read = progress?.readLessons.includes(lessonId) ? 1 : 0;
     return { done: done + read, total: refs.length + 1 };
   }
+
+  /** Fila de revisão: erro de qualquer trilha, sem servidor. */
+  const wrongCount = progress?.wrongQuestions.length ?? 0;
 
   const active = LESSONS.find((l) => l.id === activeId) ?? levelLessons[0];
   const quiz = active.nextQuizId ? getQuiz(active.nextQuizId) : undefined;
@@ -210,6 +214,45 @@ export default function Dashboard() {
             );
           })}
         </ul>
+
+        {/* ------------------------------------------- fora das trilhas ---
+            Duas coisas que não pertencem a nenhuma trilha: o terminal solto e
+            a fila de revisão, que junta erro de todas elas. */}
+        <div className="mt-6 border-t border-line pt-5">
+          <p className="field-label">Fora das trilhas</p>
+          <ul className="mt-2">
+            <li>
+              <Link
+                href="/terminal"
+                className="group flex items-center gap-2.5 rounded-md px-3 py-2 text-sm text-ink-soft transition-colors duration-[var(--dur-fast)] hover:bg-sunken hover:text-ink"
+              >
+                <Terminal
+                  className="size-3.5 shrink-0 transition-colors group-hover:text-accent"
+                  aria-hidden="true"
+                />
+                Terminal livre
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/revisao"
+                className="group flex items-center gap-2.5 rounded-md px-3 py-2 text-sm text-ink-soft transition-colors duration-[var(--dur-fast)] hover:bg-sunken hover:text-ink"
+              >
+                <Repeat
+                  className="size-3.5 shrink-0 transition-colors group-hover:text-accent"
+                  aria-hidden="true"
+                />
+                Revisão
+                {wrongCount > 0 && (
+                  <span className="ml-auto font-mono text-2xs text-warn-ink">
+                    {wrongCount}
+                    <span className="sr-only"> questões na fila</span>
+                  </span>
+                )}
+              </Link>
+            </li>
+          </ul>
+        </div>
 
         {progress && (progress.attempts.length > 0 || progress.readLessons.length > 0) && (
           <div className="mt-8 hidden border-t border-line pt-5 lg:block">

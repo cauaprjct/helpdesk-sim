@@ -96,7 +96,8 @@ export const N1_INVENTORY = [
   {
     count: 64,
     label: "questões",
-    detail: "Toda alternativa errada explica por que está errada.",
+    detail:
+      "Toda alternativa errada explica por que está errada, e a ordem das alternativas muda a cada rodada. O que você errar volta na revisão, fora do contexto original.",
   },
 ] as const;
 

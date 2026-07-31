@@ -61,10 +61,18 @@ export function isCmdLine(line: string): boolean {
   return line.startsWith(PROMPT) && line.length > PROMPT.length;
 }
 
+/**
+ * Links externos da capa e do rodapé.
+ *
+ * ATENÇÃO ao LinkedIn: o slug público dele tem til — `cauã-alves-0975a129b` —
+ * e por isso a URL carrega `%C3%A3`. Escrever `caua-alves` sem o til aponta para
+ * um perfil que não existe, e a página não carrega. Não "limpe" esse escape:
+ * há teste travando isso justamente porque já quebrou uma vez.
+ */
 export const LINKS = {
   portfolio: "https://portifolio-caua.vercel.app/",
   github: "https://github.com/cauaprjct",
-  linkedin: "https://www.linkedin.com/in/caua-alves-0975a129b/",
+  linkedin: "https://www.linkedin.com/in/cau%C3%A3-alves-0975a129b/",
 } as const;
 
 export const AUTHOR = {

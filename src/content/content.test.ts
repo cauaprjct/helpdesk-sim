@@ -3,7 +3,7 @@ import { AVAILABLE_LEVELS, LESSONS } from "./lessons";
 import { QUIZZES } from "./quizzes";
 import { SCENARIOS } from "./scenarios";
 import { TICKETS, TICKETS_BY_LESSON, lessonForTicket } from "./tickets";
-import { N1_INVENTORY } from "./cover";
+import { LINKS, N1_INVENTORY } from "./cover";
 import { shuffleFor } from "@/lib/shuffle";
 
 /**
@@ -444,5 +444,50 @@ describe("posição da alternativa correta", () => {
         expect(ordem.filter((o) => o.correct).length, `${quiz.id}/${q.id}`).toBe(1);
       }
     }
+  });
+});
+
+/* ==================================== links externos da capa ============= */
+
+describe("links externos", () => {
+  /**
+   * Link errado numa peça de portfólio é caro: o visitante clica uma vez, não
+   * carrega, e não volta. Já aconteceu duas vezes aqui — uma com o portfólio,
+   * outra com o LinkedIn — e nenhuma das duas o TypeScript pegaria, porque
+   * `string` errada compila igual.
+   *
+   * Estes testes não checam se a URL está no ar: teste que depende de rede
+   * falha por motivo alheio ao código. Eles travam a FORMA, que é onde os dois
+   * erros estiveram.
+   */
+  it("são todos https absolutos", () => {
+    for (const [nome, url] of Object.entries(LINKS)) {
+      expect(url, nome).toMatch(/^https:\/\//);
+    }
+  });
+
+  it("não têm espaço nem quebra de linha", () => {
+    for (const [nome, url] of Object.entries(LINKS)) {
+      expect(url, nome).not.toMatch(/\s/);
+    }
+  });
+
+  it("o LinkedIn preserva o til escapado do slug", () => {
+    // O slug público é `cauã-alves-0975a129b`. Sem o til a URL aponta para um
+    // perfil inexistente. Quem "limpar" o %C3%A3 para deixar legível quebra o
+    // link — e é exatamente o que este teste impede.
+    expect(LINKS.linkedin).toContain("cau%C3%A3-alves");
+    expect(LINKS.linkedin).not.toMatch(/\/in\/caua-alves/);
+  });
+
+  it("o portfólio aponta para o domínio que está no ar", () => {
+    // `cauadev-portfolio.vercel.app` é uma URL antiga que devolve
+    // DEPLOYMENT_NOT_FOUND. A válida é esta.
+    expect(LINKS.portfolio).toContain("portifolio-caua.vercel.app");
+    expect(LINKS.portfolio).not.toContain("cauadev-portfolio");
+  });
+
+  it("o GitHub aponta para o perfil, não para um repositório", () => {
+    expect(LINKS.github).toBe("https://github.com/cauaprjct");
   });
 });

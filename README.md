@@ -202,4 +202,4 @@ ler a saída e a ordem do diagnóstico, não a administrar um servidor.
 **Cauã Alves** — Desenvolvedor & Técnico de Informática, Rio de Janeiro
 [Portfólio](https://portifolio-caua.vercel.app/) ·
 [GitHub](https://github.com/cauaprjct) ·
-[LinkedIn](https://www.linkedin.com/in/caua-alves-0975a129b/)
+[LinkedIn](https://www.linkedin.com/in/cau%C3%A3-alves-0975a129b/)

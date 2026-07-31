@@ -126,7 +126,7 @@ Terceiro: ensina antes de cobrar. Aula → laboratório → questionário, nessa
   Informática, Rio de Janeiro"**.
 - Portfólio (destino principal do recrutador): https://portifolio-caua.vercel.app/
 - GitHub: https://github.com/cauaprjct · LinkedIn:
-  https://www.linkedin.com/in/caua-alves-0975a129b/
+  https://www.linkedin.com/in/cau%C3%A3-alves-0975a129b/
 - **Não há foto do Cauã disponível.** Ele pretende ter uma. Até existir, a capa não usa
   retrato nem placeholder de avatar — o lugar dela fica documentado, não ocupado.
 - Nunca mencionar uso de IA na construção.

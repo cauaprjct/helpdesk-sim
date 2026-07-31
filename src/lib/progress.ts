@@ -2,7 +2,11 @@
 
 /**
  * Progresso local, sem backend e sem login.
- * Fica em localStorage: nada sai da máquina, nada para proteger no servidor.
+ *
+ * Fica em localStorage: resposta e desempenho não saem da máquina, e não existe
+ * nada para proteger no servidor. O site mede acesso pela Vercel (contagem de
+ * visita e Core Web Vitals), mas isso não toca em nada daqui — nenhuma resposta,
+ * nota ou fila de revisão é enviada a lugar algum.
  */
 
 const KEY = "helpdesk-sim:v1";

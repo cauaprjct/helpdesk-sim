@@ -112,7 +112,12 @@ Duas decisões de conteúdo que valem explicar:
 Next.js 16 · React 19 · TypeScript · Tailwind CSS v4 · Vercel
 
 Site estático: **sem backend, sem login, sem banco de dados**. Progresso e preferência de
-tema ficam em `localStorage` — nada sai da máquina de quem usa.
+tema ficam em `localStorage` — resposta, nota e fila de revisão não saem da máquina de quem
+usa.
+
+O site mede **acesso**: Vercel Web Analytics (visita e página) e Speed Insights (Core Web
+Vitals reais), os dois sem cookie e sem identificar pessoa. Isso está dito na capa, porque
+medir calado enquanto a página promete privacidade seria pior que não medir.
 
 ```bash
 npm install

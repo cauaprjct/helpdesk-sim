@@ -141,7 +141,9 @@ export default function Cover() {
                     colidia com a transcrição, ilegível nos dois. */}
                 <p className="mt-6 text-sm leading-relaxed text-ink-soft">
                   Laboratório de treino, não ambiente de produção. Sem login e
-                  sem servidor: o progresso fica no seu navegador.
+                  sem banco de dados: suas respostas e seu progresso ficam no seu
+                  navegador. Só a contagem de acessos é medida, sem cookie e sem
+                  identificar ninguém.
                 </p>
               </div>
             </div>

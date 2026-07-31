@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
 /**
@@ -83,6 +85,18 @@ export default function RootLayout({
           Pular para o conteúdo
         </a>
         <main id="conteudo">{children}</main>
+
+        {/* Medição da Vercel. Web Analytics conta visita e página; Speed
+            Insights mede Core Web Vitals de gente real, não de laboratório.
+            Os dois são sem cookie e sem identificador de pessoa.
+
+            Consequência que o produto teve que assumir: o site não pode mais
+            dizer "nada sai da sua máquina". O que ele diz agora, e é verdade, é
+            que RESPOSTA e PROGRESSO continuam só no navegador, e que o que sai
+            é contagem de acesso. Métrica silenciosa contradizendo a copy seria
+            o pior dos dois mundos. */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

@@ -58,7 +58,14 @@ Terceiro: ensina antes de cobrar. Aula → laboratório → questionário, nessa
 ## Capabilities and Constraints
 
 - Site estático (Next.js na Vercel). **Sem backend, sem login, sem banco.**
-- Progresso e preferência de tema ficam em `localStorage`: nada sai da máquina do usuário.
+- Progresso e preferência de tema ficam em `localStorage`: resposta, nota e fila de revisão
+  não saem da máquina do usuário.
+- **Medição de acesso existe.** Vercel Web Analytics (visita e página) e Speed Insights (Core
+  Web Vitals de gente real), os dois sem cookie e sem identificar pessoa. Isso obrigou a
+  reescrever a copy: o site dizia "nada sai da sua máquina", e com métrica ligada isso passou
+  a ser falso. Hoje ele afirma o que é verdade — **resposta e progresso ficam no navegador; o
+  que sai é contagem de acesso**. Métrica silenciosa contradizendo a promessa da capa seria
+  pior que não ter métrica.
 - **N1** — 6 aulas (redes, help desk, estação Windows, impressão, hardware e bancada,
   domínio/AD), 9 laboratórios, 5 triagens de chamado, 48 questões.
 - **N2** — 4 aulas (identidade e confiança, permissão a fundo, DHCP/DNS no servidor,
@@ -154,8 +161,9 @@ Terceiro: ensina antes de cobrar. Aula → laboratório → questionário, nessa
    produção, e a página não finge que o N3 existe.
 5. **Vocabulário do trabalho real.** Chamado, evidência, escalonamento, ordem de serviço —
    os termos vêm das vagas, não de gamificação.
-6. **Nada de dado do usuário.** Sem login e sem servidor é decisão de produto, não
-   limitação a esconder.
+6. **Nada de dado do usuário.** Sem login e sem banco é decisão de produto, não limitação a
+   esconder. Medição de acesso é a única exceção, ela é anônima, e está escrita na capa — o
+   que não pode acontecer é medir calado enquanto a copy promete o contrário.
 
 ## Accessibility & Inclusion
 

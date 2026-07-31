@@ -248,7 +248,8 @@ export default function Dashboard() {
         {progress && (progress.attempts.length > 0 || progress.readLessons.length > 0) && (
           <div className="mt-8 hidden border-t border-line pt-5 lg:block">
             <p className="text-xs text-ink-soft">
-              Progresso só neste navegador. Sem servidor, sem login.
+              Progresso só neste navegador, sem login. Apagar aqui apaga de
+              verdade: não existe cópia em servidor.
             </p>
             <Button
               tone="ghost"

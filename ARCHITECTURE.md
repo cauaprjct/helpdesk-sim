@@ -13,7 +13,8 @@ de produto (para quem, com que promessa, o que não pode ser inventado) e
 
 O site é estático. Não existe backend, banco de dados nem login: o Next gera HTML para todas
 as rotas em tempo de build, e o único estado que persiste fica no `localStorage` do
-visitante.
+visitante. A única coisa que sai da máquina é medição anônima de acesso — ver
+[Medição](#medição).
 
 Três peças sustentam tudo:
 
@@ -129,12 +130,52 @@ memoizado executaria contra o estado da renderização anterior.
 ### Progresso
 
 `src/lib/progress.ts`, em `localStorage`, chave `helpdesk-sim:v1`. Guarda tentativas, aulas
-lidas e a fila de revisão. Sem servidor e sem login é decisão de produto, não limitação.
+lidas e a fila de revisão. Sem banco e sem login é decisão de produto, não limitação.
 
 `saveAttempt` recebe **os erros e os acertos**. Isso não é redundante: sem os acertos nada sai
 da fila de revisão, ela cresce para sempre, e a questão já dominada continua voltando — que é
 exatamente o que desqualificaria um modo de revisão. Essa era um bug real: o código só
 adicionava, apesar do comentário prometer que acerto removia.
+
+---
+
+## Medição
+
+Dois pacotes da Vercel, montados no `layout.tsx` e portanto ativos em todas as rotas:
+
+| Pacote | O que mede |
+|---|---|
+| `@vercel/analytics` | Visitas e páginas vistas — quantas pessoas entram e por onde |
+| `@vercel/speed-insights` | Core Web Vitals de **gente real** (LCP, INP, CLS), não de laboratório |
+
+Nenhum dos dois usa cookie ou identificador de pessoa.
+
+**Os dois exigem ser habilitados no painel da Vercel.** Sem isso os componentes ficam no ar e
+não coletam nada: as rotas `/_vercel/insights/*` e `/_vercel/speed-insights/*` só passam a
+existir depois de habilitar e de um novo deploy. Componente montado não é o mesmo que métrica
+ligada.
+
+### O que isso custou em copy
+
+O site afirmava, em três telas, "nada sai da sua máquina". Com medição ligada isso virou
+mentira. As três frases foram reescritas para dizer o que é verdade: **resposta, nota e fila
+de revisão ficam no navegador; o que sai é contagem de acesso, anônima.** A ressalva da capa
+diz isso na primeira tela.
+
+Medir calado enquanto a página promete privacidade seria o pior dos dois mundos — e num
+projeto cuja tese é honestidade sobre o que é laboratório, seria o tipo de contradição que
+desmonta tudo o mais.
+
+### `.npmrc`
+
+`@vercel/analytics` declara `@sveltejs/kit` como peer **opcional**. O npm tenta resolver essa
+dependência opcional mesmo em projeto sem Svelte, e a cadeia dela exige vite 8 — enquanto o
+vitest daqui traz vite 7. Resultado: `ERESOLVE` por causa de um pacote que nunca será
+carregado.
+
+O `.npmrc` fixa `legacy-peer-deps=true`, que faz o npm não tentar instalar peers
+automaticamente. É seguro aqui porque tudo que o projeto precisa em tempo de execução está
+declarado como dependência direta. Sem essa linha, `npm install` falha num clone limpo.
 
 ---
 

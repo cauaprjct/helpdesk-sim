@@ -82,8 +82,8 @@ export default function Review() {
             neste navegador, ou acertou tudo.
           </p>
           <p className="mt-3 max-w-[62ch] text-sm leading-relaxed text-ink-soft">
-            A fila fica salva só nesta máquina, no navegador. Nada é enviado para
-            servidor nenhum.
+            A fila fica salva só nesta máquina, no navegador. O que você
+            respondeu não é enviado para servidor nenhum.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <ButtonLink href="/treino">Ir para o treino</ButtonLink>

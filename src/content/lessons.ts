@@ -900,6 +900,239 @@ const impressao: Lesson = {
   ],
 };
 
+const hardwareBancada: Lesson = {
+  id: "hardware-bancada",
+  level: 1,
+  area: "hardware",
+  title: "Bancada e patrimônio: o trabalho de técnico de informática",
+  summary:
+    "Diagnóstico por sintoma, IMAC, inventário e preventiva. É o que mais aparece nas vagas de técnico — e o que mais se aprende trocando peça no lugar de pensar.",
+  minutes: 13,
+  nextQuizId: "hardware-bancada",
+  nextLabIds: ["placa-rede-queimada"],
+  blocks: [
+    {
+      kind: "p",
+      text: "Nas 30 vagas mapeadas, hardware é o requisito que mais se repete depois de Windows: **manutenção de hardware (PCs, notebooks, impressoras)**, **montagem e manutenção de microcomputadores**, **atividades de IMAC**, **controle de inventário de TI**. Não é a parte glamourosa e é a que paga o salário de técnico de informática.",
+    },
+    {
+      kind: "p",
+      text: "Esta aula não ensina a montar um PC — isso se aprende com a chave na mão. Ensina o que separa o técnico do trocador de peças: **hipótese antes de peça**, registro do que foi feito, e saber quando o problema só parece ser físico.",
+    },
+
+    { kind: "h", text: "1. Diagnóstico é por sintoma, não por peça" },
+    {
+      kind: "p",
+      text: "A primeira pergunta não é 'qual peça queimou'. É **até onde a máquina chega**. Cada faixa de sintoma restringe o suspeito a um grupo pequeno, e é isso que evita abrir o gabinete sem hipótese.",
+    },
+    {
+      kind: "table",
+      head: ["Até onde a máquina chega", "Suspeitos, em ordem"],
+      rows: [
+        [
+          "Nenhum sinal: sem LED, sem ventoinha, sem bipe",
+          "Tomada, cabo, régua, botão da fonte, fonte, botão do gabinete",
+        ],
+        [
+          "Ventoinha gira e não aparece vídeo, sem POST",
+          "Memória mal encaixada, vídeo, cabo de vídeo/monitor, placa-mãe",
+        ],
+        [
+          "POST passa e o sistema não sobe",
+          "Ordem de boot, disco, partição, sistema operacional",
+        ],
+        [
+          "Sobe e desliga depois de alguns minutos",
+          "Térmico (pasta, ventoinha, pó) ou fonte cedendo sob carga",
+        ],
+        [
+          "Trava de forma intermitente, sem padrão",
+          "Contato de memória, fonte degradando, disco com setor ruim, superaquecimento",
+        ],
+        [
+          "Relógio atrasa e a BIOS volta ao padrão",
+          "Bateria de CMOS",
+        ],
+        [
+          "Lento, com barulho de clique no disco",
+          "Disco em falha — copie os dados antes de qualquer teste",
+        ],
+      ],
+    },
+    {
+      kind: "callout",
+      tone: "warn",
+      text: "**Suspeita de disco em falha muda a ordem de tudo.** Antes de testar, de formatar ou de rodar ferramenta de correção, tire os dados. Cada vez que um disco ruim é ligado, a chance de perder o que ainda dá para salvar aumenta.",
+    },
+
+    { kind: "h", text: "2. O que NÃO decorar: código de bipe" },
+    {
+      kind: "p",
+      text: "Existe uma lenda de que todo técnico sabe de cor o que significa 'um bipe longo e dois curtos'. Não sabe, e não deveria: **a tabela de bipes é do fabricante da BIOS e do modelo da placa** — AMI, Award, Phoenix, Dell e HP usam códigos diferentes para a mesma falha. Placa moderna muitas vezes não bipa: usa LED de diagnóstico ou um visor de dois dígitos com código POST.",
+    },
+    {
+      kind: "callout",
+      tone: "key",
+      text: "O reflexo profissional é **anotar o padrão exato** (quantos bipes, longos ou curtos, qual LED, qual código no visor) e procurar na página de suporte daquele modelo. Decorar uma tabela genérica leva a trocar a peça errada com confiança.",
+    },
+
+    { kind: "h", text: "3. Teste que elimina, não peça que substitui" },
+    {
+      kind: "p",
+      text: "Trocar peça até funcionar tem dois problemas: sai caro e você termina sem saber o que era — então não previne a próxima. O bom teste **elimina uma hipótese**, e de preferência sem gastar peça.",
+    },
+    {
+      kind: "cmd",
+      caption: "Sequência de bancada para 'liga e não dá vídeo'",
+      lines: [
+        "1) Fora da tomada. Descarregar o corpo antes de tocar em placa.",
+        "2) Reassentar a memoria: tirar todos os pentes, limpar contato,",
+        "   voltar UM pente no primeiro slot recomendado pelo manual.",
+        "3) Ainda sem video? Trocar de slot. Depois trocar de pente.",
+        "4) Testar monitor e cabo em outro equipamento que funciona.",
+        "5) Se a placa tem video integrado, tirar a placa de video",
+        "   e ligar o monitor no integrado.",
+        "6) Limpar a CMOS conforme o manual (jumper ou tirar a bateria).",
+        "",
+        "Anotar em qual passo mudou o comportamento. Esse passo E o",
+        "diagnostico -- nao a peca que sobrou na mesa.",
+      ],
+    },
+    {
+      kind: "callout",
+      tone: "key",
+      text: "Um pente por vez não é frescura: com dois pentes instalados, um defeituoso mascara o resultado do outro e você conclui 'a memória está boa' com metade do teste feito.",
+    },
+
+    { kind: "h", text: "4. A bateria de CMOS derruba o logon do domínio" },
+    {
+      kind: "p",
+      text: "Essa é a ligação que quase ninguém faz, e ela aparece em chamado real com cara de problema de senha. A bateria da placa mantém o relógio e a configuração da BIOS quando a máquina fica sem energia. Bateria zerada: o relógio atrasa ou volta para uma data antiga a cada desligamento.",
+    },
+    {
+      kind: "p",
+      text: "Numa máquina de domínio isso não é cosmético. A autenticação Kerberos recusa ticket quando o relógio da estação está fora da tolerância — **5 minutos por padrão**. O usuário digita a senha certa e o logon falha. O sintoma diz 'senha'; a causa é uma bateria de dois reais.",
+    },
+    {
+      kind: "callout",
+      tone: "key",
+      text: "Trocar a bateria conserta a causa, mas **não** conserta o relógio sozinho: depois da troca, sincronize a hora com o controlador de domínio e confirme. É exatamente o cenário `Relógio fora de sincronia` do N2 — lá você vê o lado do software desse mesmo defeito.",
+    },
+
+    { kind: "h", text: "5. IMAC: o trabalho planejado" },
+    {
+      kind: "p",
+      text: "As vagas pedem IMAC com essas palavras: **instalação, movimentação, adição e mudança de equipamentos**. É a família de serviço que não é incidente — ninguém está parado esperando, existe data marcada, e por isso o tratamento é diferente: entra como requisição, tem janela combinada e tem checklist.",
+    },
+    {
+      kind: "table",
+      head: ["Sigla", "O que é", "O que costuma dar errado"],
+      rows: [
+        [
+          "Instalação",
+          "Equipamento novo entregue e preparado para uso",
+          "Entregar sem ingressar no domínio, sem impressora e sem as unidades de rede do setor",
+        ],
+        [
+          "Movimentação",
+          "O mesmo equipamento muda de lugar, de sala ou de pessoa",
+          "Não atualizar o inventário — o ativo passa a estar 'perdido' no sistema",
+        ],
+        [
+          "Adição",
+          "Acrescentar item ao que já existe: memória, monitor, leitor",
+          "Não registrar a peça nova, e a garantia depois não fecha",
+        ],
+        [
+          "Mudança",
+          "Troca de configuração ou de componente por outro diferente",
+          "Mexer sem janela combinada e parar a pessoa no meio do expediente",
+        ],
+      ],
+    },
+    {
+      kind: "callout",
+      tone: "warn",
+      text: "**Movimentação sem registro é a falha mais comum e a mais cara.** O equipamento existe fisicamente e desaparece do controle: na hora do inventário ninguém acha, e a empresa compra um que já tinha.",
+    },
+
+    { kind: "h", text: "6. Patrimônio e inventário" },
+    {
+      kind: "term",
+      term: "Número de série",
+      def: "Identificador que vem do fabricante, gravado no equipamento. É o que a assistência e a garantia usam.",
+      note: "Sem ele você não abre chamado de garantia. Anote na entrada do equipamento, não quando precisar.",
+    },
+    {
+      kind: "term",
+      term: "Número de patrimônio",
+      def: "Etiqueta que a empresa cola e controla. Identifica o ativo dentro da organização, não no fabricante.",
+      note: "São dois números diferentes e servem para coisas diferentes. Confundir os dois trava o chamado de garantia.",
+    },
+    {
+      kind: "term",
+      term: "Inventário de ativos",
+      def: "Quem está com o quê, onde, desde quando, e em que estado. Aparece nas vagas como 'controle de inventário de TI'.",
+      note: "É o que permite planejar troca de parque em vez de trocar por emergência, sempre no pior momento.",
+    },
+    {
+      kind: "term",
+      term: "Manutenção preventiva",
+      def: "Limpeza, revisão térmica, verificação de log e de estado de disco feitas por calendário, antes da falha.",
+      note: "Sem periodicidade definida e sem registro do que foi feito, 'preventiva' é só uma palavra no contrato.",
+    },
+
+    { kind: "h", text: "7. Segurança: as três que machucam" },
+    {
+      kind: "steps",
+      items: [
+        "**Descarga estática.** O componente morre por uma descarga que você não sente. Pulseira antiestática aterrada, ou no mínimo tocar a estrutura metálica do gabinete desligado antes de pegar em placa. Segure placa e memória pelas bordas.",
+        "**Fonte fechada.** Não abra fonte de alimentação. Os capacitores guardam carga mesmo desligada e fora da tomada. Fonte com suspeita se substitui, não se conserta.",
+        "**Bateria inflada.** Bateria de notebook estufada não se perfura, não se aperta e não se usa 'só até acabar o serviço'. Retire com cuidado e descarte no ponto certo.",
+      ],
+    },
+    {
+      kind: "callout",
+      tone: "warn",
+      text: "Máquina fora da tomada ainda não está segura por si: em desktop, mantenha a fonte desligada no botão traseiro e pressione o botão de ligar do gabinete uma vez com o cabo removido, para escoar o residual antes de mexer.",
+    },
+
+    { kind: "h", text: "8. Quando parece hardware e não é" },
+    {
+      kind: "table",
+      head: ["Reclamação", "Parece", "Verifique primeiro"],
+      rows: [
+        ["'O PC está lento'", "Disco ou memória", "Espaço livre em disco, o que sobe com o Windows, uso de CPU e temperatura"],
+        ["'Trava quando abre o sistema'", "Memória", "Se trava só naquele aplicativo, é software — não é a máquina"],
+        ["'Não liga'", "Fonte", "Se a tela está apenas apagada: monitor, cabo, entrada selecionada, energia da tela"],
+        ["'Perdeu tudo'", "Disco", "Perfil de usuário: às vezes o Windows subiu com um perfil temporário e os dados estão lá"],
+        ["'Teclado quebrou'", "Teclado", "Layout mudado (ABNT2 x internacional) antes de trocar a peça"],
+      ],
+    },
+    {
+      kind: "callout",
+      tone: "key",
+      text: "A pergunta que resolve metade desses casos: **o que mudou desde a última vez que funcionava?** Atualização, aplicativo novo, mudança de sala, queda de energia. Defeito físico raro aparece do nada; quase sempre há um evento antes.",
+    },
+
+    { kind: "h", text: "9. O limite do terminal" },
+    {
+      kind: "p",
+      text: "Existe uma classe de defeito que o prompt **não** resolve, e reconhecer isso é parte do ofício. `ipconfig` mostra 'mídia desconectada' de três causas diferentes: cabo ruim, porta do switch morta, placa de rede com defeito. A saída é idêntica nos três casos.",
+    },
+    {
+      kind: "p",
+      text: "O que separa as três não é comando: é **substituição**. Outro cabo, outra porta, outra máquina na mesma porta. O laboratório desta aula é justamente esse — você vai confirmar no terminal o que pode ser confirmado e concluir com o que veio do teste físico.",
+    },
+
+    { kind: "h", text: "O que fazer agora" },
+    {
+      kind: "p",
+      text: "Faça o laboratório da placa de rede: o chamado já chega com cabo e porta testados, e a sua tarefa é ler a saída e concluir sem passar do que a evidência permite. Depois as duas triagens de bancada — 'o computador não liga' treina ordem de teste e laudo, e a de movimentação treina o IMAC que as vagas pedem por nome.",
+    },
+  ],
+};
+
 /* ============================================================== nível 2 ===
    O N2 não é "o N1 com mais anos". É outro tipo de trabalho: recebe o que foi
    escalado, mexe em servidor, e responde por causa raiz em vez de só restaurar
@@ -1388,6 +1621,7 @@ export const LESSONS: Lesson[] = [
   helpdeskConceitos,
   windowsEstacao,
   impressao,
+  hardwareBancada,
   dominioBasico,
   n2Identidade,
   n2Permissao,

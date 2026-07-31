@@ -2099,11 +2099,276 @@ const n2ProblemaMudanca: Quiz = {
   ],
 };
 
+const hardwareBancada: Quiz = {
+  id: "hardware-bancada",
+  title: "Hardware, bancada e patrimônio",
+  area: "hardware",
+  summary:
+    "Diagnóstico por sintoma, IMAC, inventário e segurança. É o requisito que mais se repete nas vagas de técnico de informática depois de Windows.",
+  questions: [
+    {
+      id: "hw-sem-sinal",
+      area: "hardware",
+      context:
+        "Chamado: 'o computador não liga'. Você confirma com a pessoa: nenhuma luz no gabinete, nenhum barulho de ventoinha, nada.",
+      prompt: "Qual grupo de suspeitos essa descrição restringe?",
+      options: [
+        {
+          id: "a",
+          text: "Vídeo e monitor",
+          why: "Vídeo entra quando a máquina dá sinal de vida e a tela fica preta. Sem LED e sem ventoinha, a máquina não chegou nem a ligar — vídeo não teve chance de falhar.",
+        },
+        {
+          id: "b",
+          text: "Alimentação: tomada, régua, cabo, botão da fonte, fonte",
+          correct: true,
+          why: "Certo. 'Nenhum sinal' aponta para o caminho da energia, e nessa ordem — do mais barato e mais comum para o mais caro. Régua desligada e botão traseiro da fonte respondem por uma fatia grande desses chamados.",
+        },
+        {
+          id: "c",
+          text: "Memória",
+          why: "Memória com problema tipicamente deixa a máquina ligar — ventoinha gira, às vezes há bipe — e não dá vídeo. Se nada acende, o problema é anterior.",
+        },
+        {
+          id: "d",
+          text: "Sistema operacional",
+          why: "O sistema só entra em cena depois do POST. Sem energia não existe POST, então nada de software pode explicar esse sintoma.",
+        },
+      ],
+      takeaway:
+        "Primeiro decida ATÉ ONDE a máquina chega. 'Nenhum sinal' é alimentação; 'liga e não dá vídeo' é memória/vídeo; 'POST passa e não sobe' é disco/sistema.",
+    },
+    {
+      id: "hw-bipe",
+      area: "hardware",
+      context: "Uma máquina liga, emite três bipes curtos e não mostra imagem.",
+      prompt: "Qual é a conduta correta com esse bipe?",
+      options: [
+        {
+          id: "a",
+          text: "Trocar a memória — três bipes curtos é código de memória",
+          why: "Essa equivalência não é universal: AMI, Award, Phoenix, Dell e HP usam tabelas diferentes. Pode acertar por sorte, e é o hábito que faz trocar peça boa com confiança. Além disso, reassentar vem antes de trocar.",
+        },
+        {
+          id: "b",
+          text: "Limpar a CMOS, porque bipe indica configuração perdida",
+          why: "Limpar a CMOS é um teste legítimo, mas não por essa razão. Aplicar procedimento sem hipótese é o oposto de diagnóstico, e você perderia as configurações sem saber se era isso.",
+        },
+        {
+          id: "c",
+          text: "Anotar o padrão exato e consultar a documentação daquele modelo e fabricante de BIOS",
+          correct: true,
+          why: "Certo. O bipe é um código cujo dicionário é do fabricante. Anotar quantos bipes, longos ou curtos — ou qual LED de diagnóstico, ou o código no visor de dois dígitos — e conferir no modelo é o que transforma som em informação.",
+        },
+        {
+          id: "d",
+          text: "Ignorar: bipe é aviso de inicialização e não indica defeito",
+          why: "Um bipe curto único costuma ser POST bem-sucedido, mas padrão repetido acompanhado de ausência de vídeo é justamente o canal que a placa usa para relatar falha quando não tem como escrever na tela.",
+        },
+      ],
+      takeaway:
+        "Tabela de bipe é por fabricante e por modelo. O profissional anota o padrão e consulta; quem decora tabela genérica troca a peça errada.",
+    },
+    {
+      id: "hw-cmos-kerberos",
+      area: "hardware",
+      context:
+        "Uma estação de domínio começou a falhar no logon. O relógio dela está 40 minutos atrasado, e a data da BIOS voltou ao padrão de fábrica depois de um desligamento.",
+      prompt: "Qual é a causa mais provável, e por que o logon falha?",
+      options: [
+        {
+          id: "a",
+          text: "Bateria de CMOS descarregada; o relógio fora de sincronia faz o Kerberos recusar o ticket",
+          correct: true,
+          why: "Certo. A bateria mantém relógio e configuração da BIOS sem energia. Zerada, o relógio atrasa e a autenticação Kerberos recusa ticket fora da tolerância — 5 minutos por padrão. O sintoma parece senha; a causa é uma bateria.",
+        },
+        {
+          id: "b",
+          text: "Senha do usuário expirada",
+          why: "Senha expirada dá mensagem própria e não mexe no relógio nem na configuração da BIOS. Os dois sinais físicos aqui apontam para outro lugar.",
+        },
+        {
+          id: "c",
+          text: "Conta de computador precisa ser reingressada no domínio",
+          why: "Confiança quebrada é um problema real e tem outra assinatura, sem relação com relógio atrasado e BIOS voltando ao padrão. Reingressar sem trocar a bateria devolve o problema no próximo desligamento.",
+        },
+        {
+          id: "d",
+          text: "Perfil de usuário corrompido na estação",
+          why: "Perfil corrompido deixa logar e sobe a sessão com problema, além de não afetar o relógio nem a BIOS.",
+        },
+      ],
+      takeaway:
+        "Bateria de CMOS zerada em máquina de domínio vira falha de logon: fora de 5 minutos, o Kerberos recusa. Trocar a bateria E sincronizar a hora depois.",
+    },
+    {
+      id: "hw-um-pente",
+      area: "hardware",
+      context: "Você suspeita de memória numa máquina que liga e não dá vídeo.",
+      prompt: "Por que testar com um pente por vez, em vez de todos instalados?",
+      options: [
+        {
+          id: "a",
+          text: "Porque com dois pentes um defeituoso mascara o resultado do outro",
+          correct: true,
+          why: "Certo. Com os dois instalados você não sabe qual respondeu pelo comportamento, e um ruim pode impedir o teste do bom. Um por vez isola: o passo em que o comportamento muda é o diagnóstico.",
+        },
+        {
+          id: "b",
+          text: "Porque a placa-mãe não aceita dois pentes de marcas diferentes",
+          why: "Marcas diferentes podem gerar instabilidade em alguns casos, mas não é a razão do teste isolado — e muita máquina funciona com pentes diferentes sem problema.",
+        },
+        {
+          id: "c",
+          text: "Porque cada pente precisa ser formatado separadamente",
+          why: "Memória RAM não é armazenamento e não se formata. Ela perde o conteúdo ao desligar.",
+        },
+        {
+          id: "d",
+          text: "Porque o Windows só reconhece um pente por vez até reiniciar",
+          why: "O Windows reconhece toda a memória instalada que a placa apresenta. Isso não tem relação com técnica de teste.",
+        },
+      ],
+      takeaway:
+        "Teste que elimina uma variável por vez. O valor não está na peça que sobrou na mesa: está em saber em que passo o comportamento mudou.",
+    },
+    {
+      id: "hw-imac",
+      area: "hardware",
+      context:
+        "Uma pessoa muda de sala e leva o mesmo computador e os mesmos monitores. Nada é acrescentado nem trocado.",
+      prompt: "Qual atividade de IMAC é essa, e qual o passo mais esquecido?",
+      options: [
+        {
+          id: "a",
+          text: "Instalação — e o passo esquecido é ingressar a máquina no domínio",
+          why: "Instalação é equipamento novo entrando em uso. Aqui o equipamento já existe e já está inventariado, e mudar de sala não afeta o ingresso no domínio.",
+        },
+        {
+          id: "b",
+          text: "Adição — e o passo esquecido é registrar a peça nova",
+          why: "Adição é acrescentar item ao que existe: memória, um monitor a mais, um leitor. Nada foi acrescentado.",
+        },
+        {
+          id: "c",
+          text: "Movimentação — e o passo esquecido é atualizar a localização no inventário",
+          correct: true,
+          why: "Certo. Movimentação é o mesmo ativo mudando de lugar, e a atualização do inventário é o último passo e o mais abandonado. Sem ela o equipamento existe na sala nova e continua registrado na antiga — na hora do inventário ninguém acha.",
+        },
+        {
+          id: "d",
+          text: "Mudança — e o passo esquecido é abrir janela de manutenção",
+          why: "Mudança é alterar configuração ou trocar componente por outro diferente. Janela combinada realmente importa em movimentação, mas a classificação aqui é outra.",
+        },
+      ],
+      takeaway:
+        "IMAC = Instalação, Movimentação, Adição, Mudança. É trabalho planejado, entra como requisição — e movimentação sem atualizar inventário é a falha mais cara.",
+    },
+    {
+      id: "hw-patrimonio",
+      area: "hardware",
+      context:
+        "Você vai abrir um chamado de garantia de um notebook com o fabricante.",
+      prompt: "Qual número o fabricante precisa, e qual é a diferença entre os dois?",
+      options: [
+        {
+          id: "a",
+          text: "O número de patrimônio — é o identificador oficial do equipamento",
+          why: "Patrimônio é a etiqueta que a empresa cola e controla internamente. O fabricante não tem como saber o que ela significa.",
+        },
+        {
+          id: "b",
+          text: "O número de série, que vem do fabricante; o patrimônio é o controle interno da empresa",
+          correct: true,
+          why: "Certo. São dois números para coisas diferentes: a série identifica o equipamento junto ao fabricante e é o que abre garantia; o patrimônio identifica o ativo dentro da empresa. Confundir os dois trava o chamado de garantia.",
+        },
+        {
+          id: "c",
+          text: "Qualquer um dos dois — fabricantes aceitam os dois formatos",
+          why: "O fabricante só reconhece o que ele emitiu. Etiqueta interna da empresa não existe na base dele.",
+        },
+        {
+          id: "d",
+          text: "O endereço MAC da placa de rede",
+          why: "MAC identifica a interface de rede, não o equipamento para fins de garantia. Serve para reserva de DHCP e rastreio em rede, não para assistência.",
+        },
+      ],
+      takeaway:
+        "Série é do fabricante e abre garantia. Patrimônio é da empresa e controla o ativo. Anote os dois na entrada do equipamento, não quando precisar.",
+    },
+    {
+      id: "hw-disco-dados",
+      area: "hardware",
+      context:
+        "Uma máquina está lenta e o disco faz um clique repetido. A pessoa diz que tem planilhas do mês na área de trabalho, sem cópia.",
+      prompt: "Qual é o primeiro passo?",
+      options: [
+        {
+          id: "a",
+          text: "Rodar uma ferramenta de verificação e correção do disco",
+          why: "Ferramenta de correção escreve no disco e mantém a máquina ligada por muito tempo. Num disco em falha física, é exatamente o que reduz a chance de recuperar o que ainda dá.",
+        },
+        {
+          id: "b",
+          text: "Copiar os dados para outro lugar antes de qualquer teste",
+          correct: true,
+          why: "Certo. Clique repetido é sinal de falha física, e cada hora ligado piora. Dados primeiro, sempre — nenhum diagnóstico vale mais do que as planilhas do mês que não têm cópia.",
+        },
+        {
+          id: "c",
+          text: "Formatar e reinstalar o Windows, já que a máquina está lenta",
+          why: "Destrói os dados e não conserta hardware. E se o disco está falhando, a reinstalação provavelmente falha no meio ou volta a apresentar o problema.",
+        },
+        {
+          id: "d",
+          text: "Desfragmentar o disco para melhorar o desempenho",
+          why: "Desfragmentação faz leitura e escrita intensas na superfície do disco: é a operação mais agressiva possível para um disco em falha. Além disso, não se desfragmenta SSD.",
+        },
+      ],
+      takeaway:
+        "Suspeita de disco em falha inverte a ordem de tudo: dados primeiro, diagnóstico depois. Cada ciclo ligado é chance perdida.",
+    },
+    {
+      id: "hw-parece-hardware",
+      area: "hardware",
+      context:
+        "Reclamação: 'meu PC está muito lento'. A máquina tem 2 anos e nunca deu problema.",
+      prompt: "O que verificar antes de falar em trocar peça?",
+      options: [
+        {
+          id: "a",
+          text: "Espaço livre em disco, o que inicia com o Windows, uso de CPU e temperatura",
+          correct: true,
+          why: "Certo. Lentidão tem muito mais causa de software e de estado do que de peça: disco quase cheio, dezenas de programas na inicialização, algo consumindo CPU, ou superaquecimento fazendo o processador reduzir a frequência. Todos verificáveis sem abrir o gabinete.",
+        },
+        {
+          id: "b",
+          text: "Trocar o disco por SSD, que resolve lentidão",
+          why: "Costuma melhorar muito, e às vezes é a decisão certa — mas como conclusão, não como primeiro passo. Trocar peça sem medir é gastar sem saber se era isso, e a lentidão pode voltar intacta.",
+        },
+        {
+          id: "c",
+          text: "Adicionar memória, porque 2 anos já é máquina velha",
+          why: "Idade não é diagnóstico. Sem olhar o uso de memória real, a adição pode não mudar nada — e o gasto fica sem justificativa no inventário.",
+        },
+        {
+          id: "d",
+          text: "Reinstalar o Windows, que é mais rápido do que investigar",
+          why: "Reinstalar às vezes resolve e é o oposto de diagnóstico: leva horas, interrompe a pessoa, e você termina sem saber a causa — então não previne a próxima nem ajuda nas outras máquinas.",
+        },
+      ],
+      takeaway:
+        "A pergunta que resolve metade desses chamados: o que mudou desde a última vez que estava bom? Defeito físico raramente aparece do nada.",
+    },
+  ],
+};
+
 export const QUIZZES: Quiz[] = [
   redesN1,
   helpdeskConceitos,
   windowsEstacao,
   impressaoQuiz,
+  hardwareBancada,
   dominioBasico,
   n2Identidade,
   n2Permissao,

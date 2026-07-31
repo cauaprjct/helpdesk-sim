@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { ArrowRight, BookOpen, Check, RotateCcw, X } from "lucide-react";
 import type { Ticket, TriageStep } from "@/content/types";
+import { lessonForTicket } from "@/content/tickets";
 import { saveAttempt } from "@/lib/progress";
 import { shuffleFor } from "@/lib/shuffle";
 import PageNav from "./PageNav";
@@ -13,6 +14,9 @@ export default function TicketTriage({ ticket }: { ticket: Ticket }) {
   const [index, setIndex] = useState(0);
   const [results, setResults] = useState<Record<string, boolean>>({});
   const [finished, setFinished] = useState(false);
+
+  /** Aula da trilha a que este chamado pertence, não uma aula fixa. */
+  const aulaDeApoio = lessonForTicket(ticket.id);
 
   const step = ticket.steps[index];
   const total = ticket.steps.length;
@@ -122,10 +126,12 @@ export default function TicketTriage({ ticket }: { ticket: Ticket }) {
               <RotateCcw className="size-4" aria-hidden="true" />
               Refazer
             </Button>
-            <ButtonLink tone="secondary" href="/aula/helpdesk-conceitos">
-              <BookOpen className="size-4" aria-hidden="true" />
-              Reler a aula
-            </ButtonLink>
+            {aulaDeApoio && (
+              <ButtonLink tone="secondary" href={`/aula/${aulaDeApoio}`}>
+                <BookOpen className="size-4" aria-hidden="true" />
+                Reler a aula
+              </ButtonLink>
+            )}
             <ButtonLink tone="ghost" href="/">
               Painel
             </ButtonLink>

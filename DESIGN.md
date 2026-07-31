@@ -281,10 +281,16 @@ a distribuição fechou em 25/14/19/25.
   - alvos de toque: nenhum abaixo de 24px além do link de pular conteúdo, que cresce ao
     receber foco
 - Detector mecânico do skill sobre os arquivos alterados: **zero achados**.
-- Contagens da capa conferidas no código: **9 aulas, 12 laboratórios, 3 triagens de chamado
-  e 64 questões** (N1 com 5/8/3/40, N2 com 4/4/0/24). O número de vagas mapeadas é **30**,
+- Contagens da capa conferidas no código: **10 aulas, 13 laboratórios, 5 triagens de chamado
+  e 72 questões** (N1 com 6/9/5/48, N2 com 4/4/0/24). O número de vagas mapeadas é **30**,
   o que o CSV de origem tem com `vaga_ativa=sim`.
-- **Suíte automatizada: 168 testes** (`npm test`), em três arquivos — motor do terminal,
+- **Trilha de hardware, verificada na interface:** o painel do N1 passou a listar seis
+  trilhas; a aula renderiza nove seções, três tabelas e o bloco de bancada; o laboratório
+  `placa-rede-queimada` fecha a evidência em 2/2 com `ipconfig /all` e `getmac`, e o `getmac`
+  lista o endereço físico informando mídia desconectada — que é a evidência que descarta
+  "placa desabilitada". A triagem de bancada roda ponta a ponta em 5/5, com ordenação de seis
+  itens. Zero erro de console.
+- **Suíte automatizada: 172 testes** (`npm test`), em três arquivos — motor do terminal,
   coerência do conteúdo, embaralhamento. Cobre a fidelidade das mensagens do Windows, a
   causalidade entre estado e saída, referências de aula para quiz e laboratório, e as
   contagens da capa contra o conteúdo real.

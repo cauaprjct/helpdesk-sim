@@ -76,25 +76,25 @@ export const AUTHOR = {
 /** Inventário do N1. Números conferidos contra o conteúdo, não estimados. */
 export const N1_INVENTORY = [
   {
-    count: 9,
+    count: 10,
     label: "aulas",
     detail:
-      "Cinco no N1 — redes, help desk, estação Windows, impressão, domínio. Quatro no N2 — identidade, permissão, DHCP/DNS no servidor, problema e mudança.",
+      "Seis no N1 — redes, help desk, estação Windows, impressão, hardware e bancada, domínio. Quatro no N2 — identidade, permissão, DHCP/DNS no servidor, problema e mudança.",
   },
   {
-    count: 12,
+    count: 13,
     label: "laboratórios de terminal",
     detail:
       "Máquina quebrada e um console que responde ao estado dela. No N2 os cenários chegam escalados, com o N1 já tendo descartado o óbvio.",
   },
   {
-    count: 3,
+    count: 5,
     label: "triagens de chamado",
     detail:
-      "Categorizar, priorizar por impacto × urgência, ordenar o diagnóstico, decidir escalar e escrever o registro.",
+      "Categorizar, priorizar por impacto × urgência, ordenar o diagnóstico, decidir escalar e escrever o registro. Duas são de bancada: laudo de defeito físico e movimentação de equipamento.",
   },
   {
-    count: 64,
+    count: 72,
     label: "questões",
     detail:
       "Toda alternativa errada explica por que está errada, e a ordem das alternativas muda a cada rodada. O que você errar volta na revisão, fora do contexto original.",

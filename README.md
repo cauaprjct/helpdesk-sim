@@ -26,11 +26,11 @@ Fora dessa sequência, duas telas sem pré-requisito:
 | **Revisão** | As questões que você errou voltam misturadas, fora da trilha de origem. Sai da fila só o que você acerta |
 
 **N1** cobre atendimento ao usuário: redes, conceitos de help desk, estação Windows,
-impressão e ambiente com domínio.
+impressão, hardware e bancada, e ambiente com domínio.
 **N2** cobre o que chega escalado: identidade e confiança no domínio, permissão a fundo,
 DHCP e DNS pelo lado do servidor, e gestão de problema e mudança.
 
-Conteúdo atual: 9 aulas, 12 laboratórios, 3 triagens, 64 questões.
+Conteúdo atual: 10 aulas, 13 laboratórios, 5 triagens, 72 questões.
 
 ## O terminal não é maquete
 
@@ -88,6 +88,24 @@ Não saiu de ementa de curso. Saiu dos requisitos que se repetem em **30 vagas r
 técnico de informática e suporte mapeadas no Rio de Janeiro** — LinkedIn, Indeed, InfoJobs,
 Catho, Gupy e Vagas.com. O que aparecia em quase todas virou aula; o que aparecia como
 teste prático virou laboratório.
+
+A trilha de **hardware e bancada** entrou por esse critério: depois de Windows, é o
+requisito mais repetido no mapeamento — "manutenção de hardware (PCs, notebooks,
+impressoras)", "montagem e manutenção de microcomputadores", "atividades de IMAC
+(instalação, movimentação, adição, mudança de equipamentos)", "controle de inventário de
+TI". Ela não ensina a montar um PC; ensina hipótese antes de peça, patrimônio, e a
+reconhecer o que só parece ser defeito físico.
+
+Duas decisões de conteúdo que valem explicar:
+
+- **Não existe tabela de código de bipe aqui.** Bipe de POST é definido pelo fabricante da
+  BIOS e pelo modelo da placa — publicar uma tabela "universal" treinaria alguém a trocar a
+  peça errada com confiança. O conteúdo ensina a anotar o padrão exato e consultar o modelo.
+- **Um laboratório existe para mostrar o limite do terminal.** `ipconfig` devolve a mesma
+  saída para cabo partido, porta de switch morta e placa de rede com defeito. Em
+  `placa-rede-queimada` o chamado chega com cabo e porta já substituídos, e a conclusão vem
+  do teste físico — não do comando. Fingir que hardware se diagnostica só por prompt seria
+  mentir sobre o ofício.
 
 ## Stack
 

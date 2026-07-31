@@ -1,4 +1,10 @@
-export type Area = "redes" | "helpdesk" | "windows" | "ad" | "impressao";
+export type Area =
+  | "redes"
+  | "helpdesk"
+  | "windows"
+  | "ad"
+  | "impressao"
+  | "hardware";
 
 export const AREA_LABEL: Record<Area, string> = {
   redes: "Redes",
@@ -6,6 +12,7 @@ export const AREA_LABEL: Record<Area, string> = {
   windows: "Estação Windows",
   ad: "Active Directory",
   impressao: "Impressão",
+  hardware: "Hardware e bancada",
 };
 
 /* ---------------------------------------------------------------- quiz --- */

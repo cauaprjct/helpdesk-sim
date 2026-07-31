@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { AVAILABLE_LEVELS, LESSONS } from "./lessons";
 import { QUIZZES } from "./quizzes";
 import { SCENARIOS } from "./scenarios";
-import { TICKETS } from "./tickets";
+import { TICKETS, TICKETS_BY_LESSON, lessonForTicket } from "./tickets";
 import { N1_INVENTORY } from "./cover";
 import { shuffleFor } from "@/lib/shuffle";
 
@@ -105,6 +105,45 @@ describe("aulas", () => {
     const referenciados = new Set(LESSONS.flatMap((l) => l.nextLabIds ?? []));
     const orfaos = SCENARIOS.filter((s) => !referenciados.has(s.id)).map((s) => s.id);
     expect(orfaos).toEqual([]);
+  });
+
+  it("todo chamado pertence a uma trilha existente", () => {
+    // O mapa vivia dentro do Dashboard: chamado sem trilha virava exercício
+    // órfão e nada acusava.
+    const idsDeAula = new Set(LESSONS.map((l) => l.id));
+    const idsDeChamado = new Set(TICKETS.map((t) => t.id));
+
+    for (const [aula, chamados] of Object.entries(TICKETS_BY_LESSON)) {
+      expect(idsDeAula, `trilha inexistente no mapa: ${aula}`).toContain(aula);
+      for (const c of chamados) {
+        expect(idsDeChamado, `chamado inexistente no mapa: ${c}`).toContain(c);
+      }
+    }
+
+    const mapeados = new Set(Object.values(TICKETS_BY_LESSON).flat());
+    const orfaos = TICKETS.filter((t) => !mapeados.has(t.id)).map((t) => t.id);
+    expect(orfaos).toEqual([]);
+  });
+
+  it("nenhum chamado aparece em duas trilhas", () => {
+    const todos = Object.values(TICKETS_BY_LESSON).flat();
+    expect(duplicados(todos)).toEqual([]);
+  });
+
+  it("todo chamado resolve para a aula da própria trilha", () => {
+    // A tela de encerramento oferece "reler a aula". O destino estava fixo em
+    // helpdesk-conceitos e mandava quem fazia a triagem de impressora para a
+    // aula errada.
+    const idsDeAula = new Set(LESSONS.map((l) => l.id));
+    for (const t of TICKETS) {
+      const aula = lessonForTicket(t.id);
+      expect(aula, `${t.id} sem aula de apoio`).toBeTruthy();
+      expect(idsDeAula, `${t.id} -> ${aula}`).toContain(aula);
+    }
+  });
+
+  it("a triagem de impressora aponta para a aula de impressão", () => {
+    expect(lessonForTicket("impressora-setor")).toBe("impressao");
   });
 
   it("todo quiz é alcançável por alguma aula", () => {
@@ -361,11 +400,11 @@ describe("posição da alternativa correta", () => {
     };
   }
 
-  it("o vício existe na fonte — é o que justifica embaralhar", () => {
-    const todas = QUIZZES.flatMap((q) => q.questions);
-    const primeiras = todas.filter((q) => q.options[0]?.correct).length;
-    expect(primeiras).toBe(todas.length);
-  });
+  // Não há teste exigindo que a fonte mantenha o vício: obrigar autor novo a
+  // escrever a resposta certa em primeiro lugar seria absurdo. O que precisa
+  // ficar travado é o RESULTADO na tela — e é o que os testes abaixo medem.
+  // Se alguém desligar o embaralhamento, a distribuição volta a 100% na
+  // primeira posição e eles quebram.
 
   it("questões: a correta se espalha pelas quatro posições", () => {
     const d = distribuicao(

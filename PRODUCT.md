@@ -59,11 +59,17 @@ Terceiro: ensina antes de cobrar. Aula → laboratório → questionário, nessa
 
 - Site estático (Next.js na Vercel). **Sem backend, sem login, sem banco.**
 - Progresso e preferência de tema ficam em `localStorage`: nada sai da máquina do usuário.
-- **N1** — 5 aulas (redes, help desk, estação Windows, impressão, domínio/AD),
-  8 laboratórios, 3 triagens de chamado, 40 questões.
+- **N1** — 6 aulas (redes, help desk, estação Windows, impressão, hardware e bancada,
+  domínio/AD), 9 laboratórios, 5 triagens de chamado, 48 questões.
 - **N2** — 4 aulas (identidade e confiança, permissão a fundo, DHCP/DNS no servidor,
   problema e mudança), 4 laboratórios, 24 questões.
-- Total: 9 aulas, 12 laboratórios, 3 triagens, 64 questões.
+- Total: 10 aulas, 13 laboratórios, 5 triagens, 72 questões.
+- **Hardware e bancada** existe porque é o requisito mais repetido nas 30 vagas mapeadas
+  depois de Windows — "manutenção de hardware (PCs, notebooks, impressoras)", "montagem e
+  manutenção de microcomputadores", "atividades de IMAC (instalação, movimentação, adição,
+  mudança de equipamentos)", "controle de inventário de TI". A trilha não ensina a montar
+  um PC: ensina hipótese antes de peça, IMAC, patrimônio e o que só parece ser físico.
+  Duas das cinco triagens são de bancada (laudo de defeito e movimentação de equipamento).
 - **Fora das trilhas, duas superfícies sem pré-requisito:**
   - `/terminal` — terminal livre. 13 estados de máquina para escolher, sem chamado, sem
     diagnóstico e sem placar, com o estado da máquina à vista ao lado do console. Existe
@@ -93,6 +99,15 @@ Terceiro: ensina antes de cobrar. Aula → laboratório → questionário, nessa
   sub-rede: quem derruba o acesso a ele é o próprio host sair do ar, não o roteador. O
   gateway só entra para sair da sub-rede. Confundir os dois faz o técnico culpar o
   equipamento errado, nos dois sentidos.
+- **O limite do terminal é conteúdo, não lacuna.** `ipconfig` devolve a mesma saída para
+  cabo partido, porta de switch morta e placa de rede com defeito — e o laboratório
+  `placa-rede-queimada` existe para ensinar exatamente isso: o que separa as três é
+  substituição física, que vem de fora do prompt. Por isso o briefing dele chega com cabo e
+  porta já testados. Cenário de hardware que fingisse ser diagnosticável só por comando
+  estaria mentindo sobre o ofício.
+- **Nada de tabela de código de bipe.** Bipe de POST é definido pelo fabricante da BIOS e
+  pelo modelo da placa; publicar uma tabela "universal" ensinaria o técnico a trocar a peça
+  errada com confiança. O conteúdo ensina a anotar o padrão exato e consultar o modelo.
 - **Fidelidade da saída:** os rótulos e mensagens do motor foram conferidos contra a saída
   real de um Windows 10 pt-BR (build 19045). Qualquer string nova precisa do mesmo
   tratamento — inventar mensagem de erro do Windows ensina o técnico a reconhecer algo que

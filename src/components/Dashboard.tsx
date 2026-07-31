@@ -16,21 +16,12 @@ import {
 import { LESSONS } from "@/content/lessons";
 import { getQuiz } from "@/content/quizzes";
 import { getScenario } from "@/content/scenarios";
-import { TICKETS } from "@/content/tickets";
+import { TICKETS, TICKETS_BY_LESSON } from "@/content/tickets";
 import { AREA_LABEL } from "@/content/types";
 import { getProgress, resetAll, type ProgressState } from "@/lib/progress";
 import { cn } from "@/lib/cn";
 import ThemeToggle from "./ThemeToggle";
 import { Button, Chip, Meter, Panel } from "./ui";
-
-/**
- * O chamado de impressora pertence à trilha de impressão, não à de conceitos —
- * é lá que ele tem a aula e o laboratório para se apoiar.
- */
-const TICKETS_BY_LESSON: Record<string, string[]> = {
-  "helpdesk-conceitos": ["nao-consigo-logar", "sistema-fora-do-ar"],
-  impressao: ["impressora-setor"],
-};
 
 const LEVEL_NOTE: Record<number, string> = {
   1: "Atendimento ao usuário: rede, estação, impressão e chamado.",

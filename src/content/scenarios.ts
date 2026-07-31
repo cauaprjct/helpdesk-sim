@@ -87,6 +87,58 @@ const midiaDesconectada: Scenario = {
     "Escopo de uma máquina só, e 'mídia desconectada' no ipconfig: isso fecha o diagnóstico na camada física em 10 segundos. Repare que `ipconfig /renew` aqui devolve erro dizendo que o cabo está desconectado — o próprio Windows te entrega a resposta.",
 };
 
+/**
+ * O irmão do `midia-desconectada`, com a MESMA saída de terminal e causa
+ * diferente. É de propósito: a lição é que `ipconfig` não separa cabo de porta
+ * de placa, e o que separa é substituição. Por isso o briefing chega com o
+ * teste físico já feito — igual a um chamado que volta da bancada.
+ */
+const placaRedeQueimada: Scenario = {
+  id: "placa-rede-queimada",
+  title: "Sem link depois de trocar cabo e porta",
+  area: "hardware",
+  reporter: "Diego Nunes · Almoxarifado",
+  briefing:
+    "Teve queda de energia ontem. Hoje esse PC não pega rede. Já troquei o cabo por um novo, mudei de porta no switch, e liguei o notebook na mesma porta com o mesmo cabo: o notebook navega normal.",
+  initial: machine({
+    hostname: "PC-ALM-07",
+    user: "diego.nunes",
+    ou: "Almoxarifado",
+    mac: "00-15-5D-7C-42-9B",
+    linkUp: false,
+    ip: null,
+    mappedDrives: {},
+    gpoApplied: false,
+  }),
+  expectedCommands: ["ipconfig /all", "getmac"],
+  hint: "A saída aqui é idêntica à de um cabo partido — e o cabo já foi trocado. Use o `getmac` para responder outra pergunta: o adaptador ainda **existe** para o Windows, ou desapareceu?",
+  diagnoses: [
+    {
+      id: "placa",
+      label: "Placa de rede da estação com defeito",
+      correct: true,
+      why: "Certo. O adaptador aparece com endereço físico e sem link, o cabo foi substituído, a porta foi trocada e outro equipamento funciona nessa mesma porta com esse mesmo cabo. Sobrou a placa. Ação: placa de rede USB ou PCIe como contorno imediato, e registrar a troca no inventário.",
+    },
+    {
+      id: "cabo-porta",
+      label: "Cabo partido ou porta do switch morta",
+      why: "Seria o primeiro palpite — e o chamado já eliminou os dois: cabo novo, outra porta, e o notebook navegando na mesma porta com o mesmo cabo. Repetir teste já feito é o jeito mais rápido de perder a confiança de quem abriu o chamado.",
+    },
+    {
+      id: "desabilitada",
+      label: "Placa desabilitada no Windows",
+      why: "Adaptador desabilitado **não aparece** na saída do `ipconfig`, e o `getmac` não listaria o endereço físico dele. Aqui ele aparece, com MAC, informando mídia desconectada — então está habilitado e sem link.",
+    },
+    {
+      id: "dhcp",
+      label: "A estação não está conseguindo endereço do DHCP",
+      why: "Sem link não existe nem a tentativa de pedir endereço. Falha de DHCP com link presente produziria 169.254.x.x; aqui não há endereço nenhum, e o motivo é anterior a isso.",
+    },
+  ],
+  debrief:
+    "Este cenário existe para mostrar um limite: **`ipconfig` não distingue cabo, porta e placa** — a saída é a mesma nos três casos. Quem fecha o diagnóstico é a substituição, e ela vem de fora do terminal. Repare a ordem que o chamado seguiu: trocou o cabo (elimina o cabo), trocou a porta (elimina a porta), ligou outro equipamento na mesma porta e cabo (elimina o trecho até o switch). Cada passo eliminou uma hipótese sem gastar peça — e sobrou uma. Detalhe de campo: queda de energia é a origem clássica disso, e vale conferir se o resto da máquina passou ilesa. Sobre o contorno: placa USB resolve hoje; a decisão entre trocar a placa, a placa-mãe ou a máquina depende da idade do equipamento e do que o inventário diz sobre a garantia.",
+};
+
 const dhcpCaiu: Scenario = {
   id: "dhcp-caiu",
   title: "Setor inteiro com 169.254",
@@ -617,6 +669,7 @@ const dhcpEscopoEsgotado: Scenario = {
 
 export const SCENARIOS: Scenario[] = [
   midiaDesconectada,
+  placaRedeQueimada,
   dhcpCaiu,
   dnsServidorErrado,
   dnsCacheVelho,
